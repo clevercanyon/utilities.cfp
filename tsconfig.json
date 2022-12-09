@@ -16,9 +16,11 @@
 	 * <custom:start> */
 
 	"compilerOptions" : {
-		"lib"   : [ "es2021" ],
+		"lib"   : [ "es2021", "dom" ],
 		"types" : [
 			"vite/client",
+			"@types/react",
+			"@types/react-dom",
 			"@cloudflare/workers-types/2022-08-04"
 		]
 	}
