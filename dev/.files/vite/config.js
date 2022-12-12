@@ -165,6 +165,10 @@ export default async ({ mode } /* { command, mode, ssrBuild } */, projConfig = {
 		input: isCma // Absolute paths.
 			? cmaAbsEntries
 			: mpaAbsIndexes,
+
+		// Peer dependencies are flagged as external as they'll be installed by a peer.
+		...(Object.keys(pkg.peerDependencies || {}).length ? { external: Object.keys(pkg.peerDependencies) } : {}),
+
 		output: {
 			extend: true, // Global || checks.
 			interop: 'auto', // Like `tsconfig.json`.
