@@ -9,13 +9,13 @@
  */
 /* eslint-env es2021, node */
 
-const mc = require('@clevercanyon/js-object-mc');
+const mc = require('merge-change');
 const baseConfig = require('./dev/.files/postcss/config.cjs');
 
-/**
+/*
  * Customizations
  * <custom:start> */
 
 module.exports = mc.merge({}, baseConfig, {});
 
-/** </custom:end> */
+/* </custom:end> */
