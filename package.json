@@ -3,7 +3,7 @@
 	"publishConfig": {
 		"access": "restricted"
 	},
-	"version": "1.0.27",
+	"version": "1.0.28",
 	"license": "GPL-3.0-or-later",
 	"name": "@clevercanyon/utilities.cfp",
 	"description": "Another great project by Clever Canyon.",
@@ -40,14 +40,14 @@
 		}
 	},
 	"peerDependencies": {
-		"@clevercanyon/utilities": "^1.0.76",
+		"@clevercanyon/utilities": "^1.0.77",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},
 	"peerDependenciesMeta": {},
 	"bundleDependencies": [],
 	"devDependencies": {
-		"@clevercanyon/skeleton-dev-deps": "^1.0.85",
+		"@clevercanyon/skeleton-dev-deps": "^1.0.87",
 		"@cloudflare/workers-types": "^4.20230115.0",
 		"@types/react": "^18.0.27",
 		"@types/react-dom": "^18.0.10"
@@ -75,8 +75,8 @@
 						"engineers": "pull",
 						"architects": "push"
 					},
-					"configVersion": "1.0.1",
-					"labels": {}
+					"labels": {},
+					"configVersion": "1.0.1"
 				},
 				"npmjs": {
 					"configVersions": "1.0.1,1.0.0"
