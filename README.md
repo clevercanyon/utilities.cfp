@@ -1,3 +1,3 @@
-# Clever Canyon: Skeleton
+# @clevercanyon/utilities.cfp
 
-This is a skeleton for new projects.
+Another great project by Clever Canyon.
