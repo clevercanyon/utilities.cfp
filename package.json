@@ -3,10 +3,10 @@
 	"publishConfig": {
 		"access": "restricted"
 	},
-	"version": "1.0.32",
+	"version": "1.0.33",
 	"license": "GPL-3.0-or-later",
 	"name": "@clevercanyon/utilities.cfp",
-	"description": "Another great project by Clever Canyon.",
+	"description": "Utilities for JavaScript apps running in a Cloudflare Pages environment.",
 	"repository": "https://github.com/clevercanyon/utilities.cfp",
 	"homepage": "https://github.com/clevercanyon/utilities.cfp#readme",
 	"bugs": "https://github.com/clevercanyon/utilities.cfp/issues",
@@ -41,7 +41,7 @@
 	},
 	"dependencies": {},
 	"peerDependencies": {
-		"@clevercanyon/utilities": "^1.0.81",
+		"@clevercanyon/utilities": "^1.0.82",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},

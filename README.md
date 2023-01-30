@@ -1,3 +1,3 @@
 # @clevercanyon/utilities.cfp
 
-Another great project by Clever Canyon.
+Utilities for JavaScript apps running in a Cloudflare Pages environment.
