@@ -17,7 +17,7 @@
 
 	"compilerOptions": {
 		"lib": ["es2021", "dom"],
-		"types": ["vite/client", "@types/react", "@types/react-dom", "@cloudflare/workers-types/2022-08-04"]
+		"types": ["vite/client", "@cloudflare/workers-types/2022-08-04", "@types/react-dom", "@types/react"]
 	}
 	/* </custom:end> */
 }
