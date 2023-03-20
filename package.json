@@ -3,7 +3,7 @@
 	"publishConfig": {
 		"access": "restricted"
 	},
-	"version": "1.0.44",
+	"version": "1.0.46",
 	"license": "GPL-3.0-or-later",
 	"name": "@clevercanyon/utilities.cfp",
 	"description": "Utilities for JavaScript apps running in a Cloudflare Pages environment.",
@@ -18,21 +18,20 @@
 	},
 	"contributors": [],
 	"type": "module",
-	"files": ["/dist"],
 	"bin": {},
 	"imports": {},
 	"exports": {
 		".": {
 			"import": "./dist/index.js",
-			"require": "./dist/index.cjs",
+			"require": "./dist/index.umd.cjs",
 			"types": "./dist/types/index.d.ts"
 		}
 	},
 	"sideEffects": ["./src/*.{html,scss,ts,tsx}"],
 	"module": "./dist/index.js",
-	"main": "./dist/index.cjs",
+	"main": "./dist/index.umd.cjs",
 	"browser": "",
-	"unpkg": "./dist/index.js",
+	"unpkg": "./dist/index.umd.cjs",
 	"types": "./dist/types/index.d.ts",
 	"typesVersions": {
 		">=3.1": {
@@ -41,7 +40,8 @@
 	},
 	"dependencies": {},
 	"peerDependencies": {
-		"@clevercanyon/utilities": "^1.0.98",
+		"@clevercanyon/utilities": "^1.0.111",
+		"@clevercanyon/utilities.web": "^1.0.44",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},
@@ -49,13 +49,12 @@
 	"optionalDependencies": {},
 	"bundleDependencies": [],
 	"devDependencies": {
-		"@clevercanyon/skeleton-dev-deps": "^1.0.121",
-		"@cloudflare/workers-types": "^4.20230115.0",
-		"@types/react": "^18.0.27",
-		"@types/react-dom": "^18.0.10"
+		"@clevercanyon/skeleton-dev-deps": "^1.0.133",
+		"@cloudflare/workers-types": "^4.20230307.0",
+		"@types/react": "^18.0.28",
+		"@types/react-dom": "^18.0.11"
 	},
 	"overrides": {},
-	"workspaces": [],
 	"cpu": ["x64", "arm64"],
 	"os": ["darwin", "linux"],
 	"engines": {
@@ -78,11 +77,11 @@
 						"architects": "push"
 					},
 					"labels": {},
-					"configVersion": "1.0.2",
+					"configVersion": "1.0.3",
 					"envsVersion": ""
 				},
 				"npmjs": {
-					"configVersions": "1.0.2,1.0.2"
+					"configVersions": "1.0.3,1.0.3"
 				}
 			}
 		}
