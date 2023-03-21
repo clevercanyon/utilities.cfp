@@ -3,7 +3,7 @@
 	"publishConfig": {
 		"access": "restricted"
 	},
-	"version": "1.0.51",
+	"version": "1.0.52",
 	"license": "GPL-3.0-or-later",
 	"name": "@clevercanyon/utilities.cfp",
 	"description": "Utilities for JavaScript apps running in a Cloudflare Pages environment.",
@@ -40,8 +40,8 @@
 	},
 	"dependencies": {},
 	"peerDependencies": {
-		"@clevercanyon/utilities": "^1.0.123",
-		"@clevercanyon/utilities.web": "^1.0.49",
+		"@clevercanyon/utilities": "^1.0.124",
+		"@clevercanyon/utilities.web": "^1.0.50",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},
@@ -49,7 +49,7 @@
 	"optionalDependencies": {},
 	"bundleDependencies": [],
 	"devDependencies": {
-		"@clevercanyon/skeleton-dev-deps": "^1.0.143",
+		"@clevercanyon/skeleton-dev-deps": "^1.0.144",
 		"@cloudflare/workers-types": "^4.20230307.0",
 		"@types/react": "^18.0.28",
 		"@types/react-dom": "^18.0.11"
