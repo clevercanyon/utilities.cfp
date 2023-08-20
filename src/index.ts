@@ -4,4 +4,4 @@
 
 import './resources/init-env.js';
 
-export {};
+export * as $cfp from './cfp.js';

@@ -3,7 +3,7 @@
 	"publishConfig": {
 		"access": "restricted"
 	},
-	"version": "1.0.53",
+	"version": "1.0.54",
 	"license": "GPL-3.0-or-later",
 	"name": "@clevercanyon/utilities.cfp",
 	"description": "Utilities for JavaScript apps running in a Cloudflare Pages environment.",
@@ -23,15 +23,20 @@
 	"exports": {
 		".": {
 			"import": "./dist/index.js",
-			"require": "./dist/index.umd.cjs",
+			"require": "./dist/index.cjs",
 			"types": "./dist/types/index.d.ts"
+		},
+		"./cfp": {
+			"import": "./dist/cfp.js",
+			"require": "./dist/cfp.cjs",
+			"types": "./dist/types/cfp.d.ts"
 		}
 	},
-	"sideEffects": ["./src/resources/init-env.ts", "./src/index.ts"],
+	"sideEffects": ["./src/resources/init-env.ts", "./src/cfp.ts", "./src/index.ts"],
 	"module": "./dist/index.js",
-	"main": "./dist/index.umd.cjs",
+	"main": "./dist/index.cjs",
 	"browser": "",
-	"unpkg": "./dist/index.umd.cjs",
+	"unpkg": "./dist/index.js",
 	"types": "./dist/types/index.d.ts",
 	"typesVersions": {
 		">=3.1": {
@@ -40,14 +45,15 @@
 	},
 	"dependencies": {},
 	"peerDependencies": {
-		"@clevercanyon/utilities": "^1.0.131",
+		"@clevercanyon/utilities": "^1.0.154",
+		"@clevercanyon/utilities.cfw": "^1.0.74",
 		"@clevercanyon/utilities.web": "^1.0.51"
 	},
 	"peerDependenciesMeta": {},
 	"optionalDependencies": {},
 	"bundleDependencies": [],
 	"devDependencies": {
-		"@clevercanyon/skeleton-dev-deps": "^1.0.157"
+		"@clevercanyon/skeleton-dev-deps": "^1.0.159"
 	},
 	"overrides": {},
 	"cpu": ["x64", "arm64"],

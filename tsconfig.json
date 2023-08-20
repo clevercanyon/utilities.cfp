@@ -15,7 +15,7 @@
 
 	"compilerOptions": {
 		"lib": ["es2021", "dom"],
-		"types": ["vite/client"]
+		"types": ["vite/client", "@cloudflare/workers-types/experimental"]
 	}
 	/* </custom:end> */
 }
