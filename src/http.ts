@@ -9,7 +9,7 @@ import { $str, $obj, $http } from '@clevercanyon/utilities';
 /**
  * Defines types.
  */
-export type HeadersFileOptions = {
+export type DefaultHeaderOptions = {
 	appType: string;
 	isC10n?: boolean;
 };
@@ -21,8 +21,8 @@ export type HeadersFileOptions = {
  *
  * @returns         Default headers file for a Cloudflare Pages site.
  */
-export const prepareHeadersFile = (options: HeadersFileOptions): string => {
-	const opts = $obj.defaults({}, options, { appType: '', isC10n: false }) as Required<HeadersFileOptions>;
+export const prepareDefaultHeaders = (options: DefaultHeaderOptions): string => {
+	const opts = $obj.defaults({}, options, { appType: '', isC10n: false }) as Required<DefaultHeaderOptions>;
 
 	if (!['spa', 'mpa'].includes(opts.appType)) {
 		return ''; // Not applicable.
