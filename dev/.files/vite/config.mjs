@@ -23,7 +23,8 @@ import { ViteMinifyPlugin as pluginMinifyHTML } from 'vite-plugin-minify';
 import u from '../bin/includes/utilities.mjs';
 import importAliases from './includes/import-aliases.mjs';
 import { $fs, $glob } from '../../../node_modules/@clevercanyon/utilities.node/dist/index.js';
-import { $is, $str, $obj, $obp, $http, $time } from '../../../node_modules/@clevercanyon/utilities/dist/index.js';
+import { $http as $cfpꓺhttp } from '../../../node_modules/@clevercanyon/utilities.cfp/dist/index.js';
+import { $is, $str, $obj, $obp, $time } from '../../../node_modules/@clevercanyon/utilities/dist/index.js';
 
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
@@ -322,7 +323,7 @@ export default async ({ mode, command, ssrBuild: isSSRBuild }) => {
 							fileContents = fileContents.replace(new RegExp($str.escRegExp(key), 'gu'), staticDefs[key]);
 						}
 						if (['_headers'].includes(fileRelPath)) {
-							const cfpDefaultHeaders = $http.prepareCFPDefaultHeaders({ appType, isC10n: env.APP_IS_C10N || false });
+							const cfpDefaultHeaders = $cfpꓺhttp.prepareDefaultHeaders({ appType, isC10n: env.APP_IS_C10N || false });
 							fileContents = fileContents.replace('$$__APP_CFP_DEFAULT_HEADERS__$$', cfpDefaultHeaders);
 						}
 						if (['_headers', '_redirects', 'robots.txt'].includes(fileRelPath)) {

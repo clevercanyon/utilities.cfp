@@ -3,7 +3,7 @@
 	"publishConfig": {
 		"access": "restricted"
 	},
-	"version": "1.0.56",
+	"version": "1.0.57",
 	"license": "GPL-3.0-or-later",
 	"name": "@clevercanyon/utilities.cfp",
 	"description": "Utilities for JavaScript apps running in a Cloudflare Pages environment.",
@@ -31,13 +31,18 @@
 			"require": "./dist/cfp.cjs",
 			"types": "./dist/types/cfp.d.ts"
 		},
+		"./geo": {
+			"import": "./dist/geo.js",
+			"require": "./dist/geo.cjs",
+			"types": "./dist/types/geo.d.ts"
+		},
 		"./http": {
 			"import": "./dist/http.js",
 			"require": "./dist/http.cjs",
 			"types": "./dist/types/http.d.ts"
 		}
 	},
-	"sideEffects": ["./src/resources/init-env.ts", "./src/cfp.ts", "./src/http.ts", "./src/index.ts"],
+	"sideEffects": ["./src/resources/init-env.ts", "./src/cfp.ts", "./src/geo.ts", "./src/http.ts", "./src/index.ts"],
 	"module": "./dist/index.js",
 	"main": "./dist/index.cjs",
 	"browser": "",
@@ -50,7 +55,7 @@
 	},
 	"dependencies": {},
 	"peerDependencies": {
-		"@clevercanyon/utilities": "^1.0.157",
+		"@clevercanyon/utilities": "^1.0.158",
 		"@clevercanyon/utilities.cfw": "^1.0.74",
 		"@clevercanyon/utilities.web": "^1.0.51"
 	},
