@@ -41,7 +41,7 @@ export type { core };
  *
  * @returns        Response promise.
  */
-export async function handleFetchEvent(ifeData: InitialFetchEventData): Promise<core.Response> {
+export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<core.Response> => {
 	let { request } = ifeData.ctx;
 	let url: core.URL | null = null;
 	const { env } = ifeData.ctx;
@@ -62,4 +62,4 @@ export async function handleFetchEvent(ifeData: InitialFetchEventData): Promise<
 	const feData = { request, env, ctx, route, url }; // Recompiles data.
 
 	return route(feData); // Handles a Cloudflare Pages function route.
-}
+};
