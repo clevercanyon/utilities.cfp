@@ -11,7 +11,7 @@ import type { core as $cfpꓺcore, FetchEventData as $cfpꓺFetchEventData } fro
 /**
  * Defines types.
  */
-export type HandleCatchAllRouteOptions = Omit<$preactꓺssr.PrerenderSPAToStringOptions, 'request'>;
+export type HandleCatchAllRouteOptions = Omit<$preactꓺssr.PrerenderSPAOptions, 'request'>;
 
 /**
  * Handles an SPA's catch-all function route.
@@ -29,7 +29,7 @@ export const handleCatchAllRoute = async (feData: $cfpꓺFetchEventData, opts: H
 		config.status = 200;
 		config.maxAge = 900;
 		config.headers = { 'content-type': 'text/html; charset=utf-8' };
-		config.body = await $preactꓺssr.prerenderSPAToString({ request, appManifest: opts.appManifest, App: opts.App });
+		config.body = await $preactꓺssr.prerenderSPA({ request, appManifest: opts.appManifest, App: opts.App });
 	}
 	return $http.prepareResponse(request, config) as $cfpꓺcore.Response;
 };
