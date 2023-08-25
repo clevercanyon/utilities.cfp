@@ -5,16 +5,19 @@
 import '../../resources/init-env.js';
 
 import { responseConfig as $httpꓺresponseConfig, prepareResponse as $httpꓺprepareResponse } from '@clevercanyon/utilities/http';
-import { prerenderSPA as $preactꓺisoꓺprerenderSPA, hydrateSPA as $preactꓺisoꓺhydrateSPA } from '@clevercanyon/utilities/preact/apis/iso';
+import { prerenderSPA as $preactꓺisoꓺprerenderSPA, hydrativeRenderSPA as $preactꓺisoꓺhydrativeRenderSPA } from '@clevercanyon/utilities/preact/apis/iso';
 
 import type { core as $cfpꓺcore, FetchEventData as $cfpꓺFetchEventData } from '../../cfp.js';
-import type { PrerenderSPAOptions as $preactꓺisoꓺPrerenderSPAOptions, HydrateSPAOptions as $preactꓺisoꓺHydrateSPAOptions } from '@clevercanyon/utilities/preact/apis/iso';
+import type {
+	PrerenderSPAOptions as $preactꓺisoꓺPrerenderSPAOptions,
+	HydrativeRenderSPAOptions as $preactꓺisoꓺHydrativeRenderSPAOptions,
+} from '@clevercanyon/utilities/preact/apis/iso';
 
 /**
  * Defines types.
  */
 export type HandleSPACatchAllRouteOptions = Omit<$preactꓺisoꓺPrerenderSPAOptions, 'request'>;
-export type HydrateSPAOptions = $preactꓺisoꓺHydrateSPAOptions;
+export type HydrativeRenderSPAOptions = $preactꓺisoꓺHydrativeRenderSPAOptions;
 
 /**
  * Handles an SPA's catch-all function route.
@@ -42,8 +45,8 @@ export const handleSPACatchAllRoute = async (feData: $cfpꓺFetchEventData, opts
 /**
  * Hydrates SPA component on client-side.
  *
- * @param opts {@see HydrateSPAOptions} for details.
+ * @param opts {@see HydrativeRenderSPAOptions} for details.
  *
  * @note Client-side use only.
  */
-export { $preactꓺisoꓺhydrateSPA as hydrateSPA };
+export { $preactꓺisoꓺhydrativeRenderSPA as hydrativeRenderSPA };
