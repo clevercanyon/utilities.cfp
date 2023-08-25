@@ -26,7 +26,7 @@ import { $fs, $glob } from '../../../node_modules/@clevercanyon/utilities.node/d
 import { $http as $cfpꓺhttp } from '../../../node_modules/@clevercanyon/utilities.cfp/dist/index.js';
 import { $is, $str, $obj, $obp, $time } from '../../../node_modules/@clevercanyon/utilities/dist/index.js';
 
-import $preactꓺ404 from '../../../node_modules/@clevercanyon/utilities/dist/preact/components/404.js';
+import { StandAlone as $preactꓺ404ꓺStandAlone } from '../../../node_modules/@clevercanyon/utilities/dist/preact/components/404.js';
 import { renderToString as $preactꓺrenderToString } from '../../../node_modules/@clevercanyon/utilities/dist/preact/apis/ssr.js';
 
 import { createRequire } from 'node:module';
@@ -335,7 +335,7 @@ export default async ({ mode, command, ssrBuild: isSSRBuild }) => {
 							fileContents = fileContents.replace('$$__APP_CFP_DEFAULT_HEADERS__$$', cfpDefaultHeaders);
 						}
 						if (['404.html'].includes(fileRelPath)) {
-							const cfpDefault404 = '<!DOCTYPE html>' + $preactꓺrenderToString($preactꓺ404);
+							const cfpDefault404 = '<!DOCTYPE html>' + $preactꓺrenderToString($preactꓺ404ꓺStandAlone);
 							fileContents = fileContents.replace('$$__APP_CFP_DEFAULT_404_HTML__$$', cfpDefault404);
 						}
 						if (['_headers', '_redirects', 'robots.txt'].includes(fileRelPath)) {
@@ -382,9 +382,8 @@ export default async ({ mode, command, ssrBuild: isSSRBuild }) => {
 	 */
 	const esbuildConfig = {
 		// See <https://o5p.me/Wk8Fm9>.
-		jsxFactory: 'h', // Required preact config.
-		jsxFragment: 'Fragment',
-		jsxInject: `import { h, Fragment } from 'preact'`,
+		jsx: 'automatic', // Matches TypeScript config.
+		jsxImportSource: 'preact', // Matches TypeScript config.
 
 		legalComments: 'none', // See <https://o5p.me/DZKXwX>.
 	};
@@ -415,8 +414,8 @@ export default async ({ mode, command, ssrBuild: isSSRBuild }) => {
 			compact: shouldMinify ? true : false, // Minify auto-generated snippets?
 
 			// By default, special chars in a path like `[[name]].js` get changed to `__name__.js`.
-			// This prevents that by enforcing the original and unmodified pathname consistently.
-			sanitizeFileName: false, // See: <https://o5p.me/Y2fNf9> for details.
+			// This prevents that by enforcing a custom sanitizer. See: <https://o5p.me/Y2fNf9> for details.
+			sanitizeFileName: (fileName) => fileName.replace(/[\0?*]/gu, ''),
 
 			// By default, in SSR mode, Vite forces all entry files into the distDir root.
 			// This prevents that by enforcing a consistently relative location for all entries.
