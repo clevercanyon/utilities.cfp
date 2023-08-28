@@ -47,11 +47,14 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
 	const { env } = ifeData.ctx;
 	const { ctx, route } = ifeData;
 
-	$env.capture('@global', env);
+	$env.capture('@global', env); // Captures environment vars.
 
 	try {
 		request = $http.prepareRequest(request, {}) as core.Request;
 		url = $url.parse(request.url) as core.URL;
+
+		const feData = { request, env, ctx, route, url };
+		return route(feData); // CFP function route.
 		//
 	} catch (error) {
 		if (error instanceof Response) {
@@ -59,7 +62,4 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
 		}
 		return $http.prepareResponse(request, { status: 500 }) as core.Response;
 	}
-	const feData = { request, env, ctx, route, url }; // Recompiles data.
-
-	return route(feData); // Handles a Cloudflare Pages function route.
 };
