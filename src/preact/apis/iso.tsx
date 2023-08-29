@@ -29,19 +29,19 @@ export type HydrativelyRenderSPAOptions = $preactꓺisoꓺHydrativelyRenderSPAOp
  *
  * @note Server-side use only.
  *
- * @todo Caching and server-side HTTP status headers coming from SPA prerender.
+ * @todo Caching of server-side prerenders.
  */
 export const handleSPACatchAllRoute = async (feData: $cfpꓺFetchEventData, opts: HandleSPACatchAllRouteOptions): Promise<$cfpꓺcore.Response> => {
 	const { request } = feData;
 	const config = $httpꓺresponseConfig();
 
 	if (['HEAD', 'GET'].includes(request.method)) {
-		config.status = 200;
-		config.maxAge = 900;
-		config.headers = { 'content-type': 'text/html; charset=utf-8' };
+		const { httpStatus, doctypeHTML } = await $preactꓺisoꓺprerenderSPA({ ...opts, request });
 
-		const { doctypeHTML } = await $preactꓺisoꓺprerenderSPA({ ...opts, request });
-		config.body = doctypeHTML;
+		config.status = httpStatus;
+		config.maxAge = 900; // Sets cache max age.
+		config.headers = { 'content-type': 'text/html; charset=utf-8' };
+		config.body = doctypeHTML; // HTML markup, including doctype.
 	}
 	return $httpꓺprepareResponse(request, config) as $cfpꓺcore.Response;
 };
