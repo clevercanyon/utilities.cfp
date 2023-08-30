@@ -3,7 +3,6 @@
  */
 
 import './resources/init-env.js';
-
 import { $env, $http, $url } from '@clevercanyon/utilities';
 import type * as core from '@cloudflare/workers-types/experimental';
 
