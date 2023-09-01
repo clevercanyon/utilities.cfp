@@ -34,7 +34,7 @@ export type HydrativelyRenderSPAOptions = $preactꓺisoꓺHydrativelyRenderSPAOp
  *
  * @todo Caching of server-side prerenders.
  */
-export const handleSPACatchAllRoute = async (feData: $cfpꓺFetchEventData, opts: HandleSPACatchAllRouteOptions): Promise<$type.cfp.Response> => {
+export const handleSPACatchAllRoute = async (feData: $cfpꓺFetchEventData, opts: HandleSPACatchAllRouteOptions): Promise<$type.cf.Response> => {
 	const { request } = feData;
 	let config = $httpꓺresponseConfig();
 
@@ -47,7 +47,7 @@ export const handleSPACatchAllRoute = async (feData: $cfpꓺFetchEventData, opts
 
 		config = $objꓺmergeDeep(config, httpState) as unknown as Required<$httpꓺResponseConfig>;
 	}
-	return $httpꓺprepareResponse(request, config) as $type.cfp.Response;
+	return $httpꓺprepareResponse(request, config) as $type.cf.Response;
 };
 
 /**
