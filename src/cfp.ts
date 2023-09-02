@@ -6,6 +6,8 @@ import './resources/init-env.js';
 import type { $type } from '@clevercanyon/utilities';
 import { $env, $http, $url } from '@clevercanyon/utilities';
 
+const cache = (caches as unknown as $type.cf.CacheStorage).default;
+
 /**
  * Defines types.
  */
@@ -49,9 +51,9 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
 	try {
 		request = $http.prepareRequest(request, {}) as $type.cf.Request;
 		const url = $url.parse(request.url) as $type.cf.URL;
-
 		const feData = { request, env, ctx, route, url };
-		return route(feData); // CFP function route.
+
+		return handleFetchCache(route, feData);
 		//
 	} catch (error) {
 		if (error instanceof Response) {
@@ -59,4 +61,37 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
 		}
 		return $http.prepareResponse(request, { status: 500 }) as $type.cf.Response;
 	}
+};
+
+/**
+ * Handles fetch caching.
+ *
+ * @param   route  Route handler.
+ * @param   feData Fetch event data.
+ *
+ * @returns        Response promise.
+ */
+export const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$type.cf.Response> => {
+	const { request, ctx } = feData;
+	let cachedResponse; // Initialize.
+
+	if (!$http.requestHasCacheableMethod(request)) {
+		return route(feData); // Not applicable.
+	}
+	if ((cachedResponse = await cache.match(request, { ignoreMethod: true }))) {
+		if (!$http.requestNeedsContentBody(request, cachedResponse.status)) {
+			cachedResponse = new Response(null /* No response body. */, {
+				status: cachedResponse.status,
+				statusText: cachedResponse.statusText,
+				headers: cachedResponse.headers,
+			}) as unknown as $type.cf.Response;
+		}
+		return cachedResponse;
+	}
+	const response = await route(feData);
+
+	if ('GET' === request.method && 206 !== response.status && '*' !== response.headers.get('vary')) {
+		ctx.waitUntil(cache.put(request, response.clone()));
+	}
+	return response;
 };
