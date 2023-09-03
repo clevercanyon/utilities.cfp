@@ -14,7 +14,7 @@ import type { FetchEventData as $cfpꓺFetchEventData } from '../../cfp.js';
 import { mergeDeep as $objꓺmergeDeep } from '@clevercanyon/utilities/obj';
 import type { ResponseConfig as $httpꓺResponseConfig } from '@clevercanyon/utilities/http';
 import { responseConfig as $httpꓺresponseConfig, prepareResponse as $httpꓺprepareResponse } from '@clevercanyon/utilities/http';
-import { prerenderSPA as $preactꓺisoꓺprerenderSPA, hydrativelyRenderSPA as $preactꓺisoꓺhydrativelyRenderSPA } from '@clevercanyon/utilities/preact/apis/iso';
+import { prerenderSPA as $preactꓺapisꓺisoꓺprerenderSPA, hydrativelyRenderSPA as $preactꓺapisꓺisoꓺhydrativelyRenderSPA } from '@clevercanyon/utilities/preact/apis/iso';
 
 /**
  * Defines types.
@@ -37,11 +37,11 @@ export const handleSPACatchAllRoute = async (feData: $cfpꓺFetchEventData, opts
 	let config = $httpꓺresponseConfig();
 
 	if (['HEAD', 'GET'].includes(request.method)) {
-		const { httpState, doctypeHTML } = await $preactꓺisoꓺprerenderSPA({ ...opts, request });
+		const { httpState, docType, html } = await $preactꓺapisꓺisoꓺprerenderSPA({ ...opts, request });
 
 		config.status = 200; // Potentially overridden by SPA.
 		config.headers = { 'content-type': 'text/html; charset=utf-8' };
-		config.body = doctypeHTML; // HTML markup; including doctype.
+		config.body = docType + html; // HTML markup; including doctype.
 
 		config = $objꓺmergeDeep(config, httpState) as unknown as Required<$httpꓺResponseConfig>;
 	}
@@ -55,4 +55,4 @@ export const handleSPACatchAllRoute = async (feData: $cfpꓺFetchEventData, opts
  *
  * @note Client-side use only.
  */
-export { $preactꓺisoꓺhydrativelyRenderSPA as hydrativelyRenderSPA };
+export { $preactꓺapisꓺisoꓺhydrativelyRenderSPA as hydrativelyRenderSPA };
