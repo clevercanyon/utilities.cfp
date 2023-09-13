@@ -2,9 +2,9 @@
  * Utility class.
  */
 
-import './resources/init-env.js';
+import './resources/init-env.ts';
 
-import { $str, $obj, $http } from '@clevercanyon/utilities';
+import { $http, $obj, $str } from '@clevercanyon/utilities';
 
 /**
  * Defines types.

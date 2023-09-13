@@ -2,8 +2,8 @@
  * Utility exports.
  */
 
-import './resources/init-env.js';
+import './resources/init-env.ts';
 
-export * as $cfp from './cfp.js';
-export * as $geo from './geo.js';
-export * as $http from './http.js';
+export * as $cfp from './cfp.ts';
+export * as $geo from './geo.ts';
+export * as $http from './http.ts';

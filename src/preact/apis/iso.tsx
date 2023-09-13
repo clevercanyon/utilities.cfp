@@ -2,19 +2,18 @@
  * Utility class.
  */
 
-import '../../resources/init-env.js';
-
-import type {
-	PrerenderSPAOptions as $preactꓺisoꓺPrerenderSPAOptions,
-	HydrativelyRenderSPAOptions as $preactꓺisoꓺHydrativelyRenderSPAOptions,
-} from '@clevercanyon/utilities/preact/apis/iso';
+import '../../resources/init-env.ts';
 
 import type { $type } from '@clevercanyon/utilities';
-import type { FetchEventData as $cfpꓺFetchEventData } from '../../cfp.js';
-import { mergeDeep as $objꓺmergeDeep } from '@clevercanyon/utilities/obj';
 import type { ResponseConfig as $httpꓺResponseConfig } from '@clevercanyon/utilities/http';
-import { responseConfig as $httpꓺresponseConfig, prepareResponse as $httpꓺprepareResponse } from '@clevercanyon/utilities/http';
-import { prerenderSPA as $preactꓺapisꓺisoꓺprerenderSPA, hydrativelyRenderSPA as $preactꓺapisꓺisoꓺhydrativelyRenderSPA } from '@clevercanyon/utilities/preact/apis/iso';
+import { prepareResponse as $httpꓺprepareResponse, responseConfig as $httpꓺresponseConfig } from '@clevercanyon/utilities/http';
+import { mergeDeep as $objꓺmergeDeep } from '@clevercanyon/utilities/obj';
+import type {
+	HydrativelyRenderSPAOptions as $preactꓺisoꓺHydrativelyRenderSPAOptions,
+	PrerenderSPAOptions as $preactꓺisoꓺPrerenderSPAOptions,
+} from '@clevercanyon/utilities/preact/apis/iso';
+import { hydrativelyRenderSPA as $preactꓺapisꓺisoꓺhydrativelyRenderSPA, prerenderSPA as $preactꓺapisꓺisoꓺprerenderSPA } from '@clevercanyon/utilities/preact/apis/iso';
+import type { FetchEventData as $cfpꓺFetchEventData } from '../../cfp.ts';
 
 /**
  * Defines types.
