@@ -3,7 +3,7 @@
     "publishConfig": {
         "access": "public"
     },
-    "version": "1.0.93",
+    "version": "1.0.94",
     "license": "GPL-3.0-or-later",
     "name": "@clevercanyon/utilities.cfp",
     "description": "Utilities for JavaScript apps running in a Cloudflare Pages environment.",
@@ -22,34 +22,34 @@
     "imports": {},
     "exports": {
         ".": {
+            "types": "./dist/types/index.d.ts",
             "import": "./dist/index.js",
-            "require": "./dist/index.cjs",
-            "types": "./dist/types/index.d.ts"
+            "default": "./dist/index.js"
         },
         "./cfp": {
+            "types": "./dist/types/cfp.d.ts",
             "import": "./dist/cfp.js",
-            "require": "./dist/cfp.cjs",
-            "types": "./dist/types/cfp.d.ts"
+            "default": "./dist/cfp.js"
         },
         "./geo": {
+            "types": "./dist/types/geo.d.ts",
             "import": "./dist/geo.js",
-            "require": "./dist/geo.cjs",
-            "types": "./dist/types/geo.d.ts"
+            "default": "./dist/geo.js"
         },
         "./http": {
+            "types": "./dist/types/http.d.ts",
             "import": "./dist/http.js",
-            "require": "./dist/http.cjs",
-            "types": "./dist/types/http.d.ts"
+            "default": "./dist/http.js"
         },
         "./preact/apis/iso": {
+            "types": "./dist/types/preact/apis/iso.d.ts",
             "import": "./dist/preact/apis/iso.js",
-            "require": "./dist/preact/apis/iso.cjs",
-            "types": "./dist/types/preact/apis/iso.d.ts"
+            "default": "./dist/preact/apis/iso.js"
         }
     },
     "sideEffects": ["./src/resources/init-env.ts", "./src/cfp.ts", "./src/geo.ts", "./src/http.ts", "./src/index.ts", "./src/preact/apis/iso.tsx"],
     "module": "./dist/index.js",
-    "main": "./dist/index.cjs",
+    "main": "./dist/index.js",
     "browser": "",
     "unpkg": "./dist/index.js",
     "types": "./dist/types/index.d.ts",
@@ -60,15 +60,15 @@
     },
     "dependencies": {},
     "peerDependencies": {
-        "@clevercanyon/utilities": "^1.0.265",
-        "@clevercanyon/utilities.cfw": "^1.0.102",
-        "@clevercanyon/utilities.web": "^1.0.72"
+        "@clevercanyon/utilities": "^1.0.266",
+        "@clevercanyon/utilities.cfw": "^1.0.103",
+        "@clevercanyon/utilities.web": "^1.0.73"
     },
     "peerDependenciesMeta": {},
     "optionalDependencies": {},
     "bundleDependencies": [],
     "devDependencies": {
-        "@clevercanyon/dev-deps": "^1.0.229"
+        "@clevercanyon/dev-deps": "^1.0.230"
     },
     "overrides": {},
     "cpu": ["x64", "arm64"],
