@@ -10,8 +10,8 @@ import { $http, $obj, $str } from '@clevercanyon/utilities';
  * Defines types.
  */
 export type DefaultHeaderOptions = {
-	appType: string;
-	isC10n?: boolean;
+    appType: string;
+    isC10n?: boolean;
 };
 
 /**
@@ -22,17 +22,17 @@ export type DefaultHeaderOptions = {
  * @returns         Default headers file for a Cloudflare Pages site.
  */
 export const prepareDefaultHeaders = (options: DefaultHeaderOptions): string => {
-	const opts = $obj.defaults({}, options, { appType: '', isC10n: false }) as Required<DefaultHeaderOptions>;
+    const opts = $obj.defaults({}, options, { appType: '', isC10n: false }) as Required<DefaultHeaderOptions>;
 
-	if (!['spa', 'mpa'].includes(opts.appType)) {
-		return ''; // Not applicable.
-	}
-	let securityHeaders = ''; // Initializes security headers.
+    if (!['spa', 'mpa'].includes(opts.appType)) {
+        return ''; // Not applicable.
+    }
+    let securityHeaders = ''; // Initializes security headers.
 
-	for (const [name, value] of Object.entries(opts.isC10n ? $http.c10nSecurityHeaders : $http.defaultSecurityHeaders)) {
-		securityHeaders += (securityHeaders ? '\n  ' : '') + name + ': ' + value;
-	}
-	return $str.dedent(`
+    for (const [name, value] of Object.entries(opts.isC10n ? $http.c10nSecurityHeaders : $http.defaultSecurityHeaders)) {
+        securityHeaders += (securityHeaders ? '\n  ' : '') + name + ': ' + value;
+    }
+    return $str.dedent(`
 		/*
 		  ${securityHeaders}
 		  vary: origin, accept, accept-language, accept-encoding
