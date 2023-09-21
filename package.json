@@ -1,111 +1,111 @@
 {
-	"private": false,
-	"publishConfig": {
-		"access": "public"
-	},
-	"version": "1.0.90",
-	"license": "GPL-3.0-or-later",
-	"name": "@clevercanyon/utilities.cfp",
-	"description": "Utilities for JavaScript apps running in a Cloudflare Pages environment.",
-	"repository": "https://github.com/clevercanyon/utilities.cfp",
-	"homepage": "https://github.com/clevercanyon/utilities.cfp#readme",
-	"bugs": "https://github.com/clevercanyon/utilities.cfp/issues",
-	"funding": "https://github.com/sponsors/clevercanyon",
-	"keywords": ["clevercanyon"],
-	"author": {
-		"name": "Clever Canyon",
-		"url": "https://clevercanyon.com"
-	},
-	"contributors": [],
-	"type": "module",
-	"bin": {},
-	"imports": {},
-	"exports": {
-		".": {
-			"import": "./dist/index.js",
-			"require": "./dist/index.cjs",
-			"types": "./dist/types/index.d.ts"
-		},
-		"./cfp": {
-			"import": "./dist/cfp.js",
-			"require": "./dist/cfp.cjs",
-			"types": "./dist/types/cfp.d.ts"
-		},
-		"./geo": {
-			"import": "./dist/geo.js",
-			"require": "./dist/geo.cjs",
-			"types": "./dist/types/geo.d.ts"
-		},
-		"./http": {
-			"import": "./dist/http.js",
-			"require": "./dist/http.cjs",
-			"types": "./dist/types/http.d.ts"
-		},
-		"./preact/apis/iso": {
-			"import": "./dist/preact/apis/iso.js",
-			"require": "./dist/preact/apis/iso.cjs",
-			"types": "./dist/types/preact/apis/iso.d.ts"
-		}
-	},
-	"sideEffects": ["./src/resources/init-env.ts", "./src/cfp.ts", "./src/geo.ts", "./src/http.ts", "./src/index.ts", "./src/preact/apis/iso.tsx"],
-	"module": "./dist/index.js",
-	"main": "./dist/index.cjs",
-	"browser": "",
-	"unpkg": "./dist/index.js",
-	"types": "./dist/types/index.d.ts",
-	"typesVersions": {
-		">=3.1": {
-			"./*": ["./dist/types/*"]
-		}
-	},
-	"dependencies": {},
-	"peerDependencies": {
-		"@clevercanyon/utilities": "^1.0.236",
-		"@clevercanyon/utilities.cfw": "^1.0.98",
-		"@clevercanyon/utilities.web": "^1.0.70"
-	},
-	"peerDependenciesMeta": {},
-	"optionalDependencies": {},
-	"bundleDependencies": [],
-	"devDependencies": {
-		"@clevercanyon/dev-deps": "^1.0.215"
-	},
-	"overrides": {},
-	"cpu": ["x64", "arm64"],
-	"os": ["darwin", "linux"],
-	"engines": {
-		"node": "^19.1.0 || ^20.5.1",
-		"npm": "^8.19.3 || ^9.2.0"
-	},
-	"config": {
-		"c10n": {
-			"&": {
-				"dotfiles": {
-					"lock": []
-				},
-				"build": {
-					"appType": "lib",
-					"targetEnv": "cfp",
-					"entryFiles": ["./src/*.{ts,tsx}", "./src/preact/*/*.{ts,tsx}"]
-				},
-				"ssrBuild": {
-					"appType": "",
-					"targetEnv": "",
-					"entryFiles": []
-				},
-				"github": {
-					"teams": {
-						"engineers": "pull",
-						"architects": "push"
-					},
-					"labels": {},
-					"configVersion": "1.0.9",
-					"envsVersion": ""
-				},
-				"npmjs": {
-					"configVersions": "1.0.9,1.0.9"
-				}
-			}
-		}
-	}
+    "private": false,
+    "publishConfig": {
+        "access": "public"
+    },
+    "version": "1.0.91",
+    "license": "GPL-3.0-or-later",
+    "name": "@clevercanyon/utilities.cfp",
+    "description": "Utilities for JavaScript apps running in a Cloudflare Pages environment.",
+    "repository": "https://github.com/clevercanyon/utilities.cfp",
+    "homepage": "https://github.com/clevercanyon/utilities.cfp#readme",
+    "bugs": "https://github.com/clevercanyon/utilities.cfp/issues",
+    "funding": "https://github.com/sponsors/clevercanyon",
+    "keywords": ["clevercanyon"],
+    "author": {
+        "name": "Clever Canyon",
+        "url": "https://clevercanyon.com"
+    },
+    "contributors": [],
+    "type": "module",
+    "bin": {},
+    "imports": {},
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs",
+            "types": "./dist/types/index.d.ts"
+        },
+        "./cfp": {
+            "import": "./dist/cfp.js",
+            "require": "./dist/cfp.cjs",
+            "types": "./dist/types/cfp.d.ts"
+        },
+        "./geo": {
+            "import": "./dist/geo.js",
+            "require": "./dist/geo.cjs",
+            "types": "./dist/types/geo.d.ts"
+        },
+        "./http": {
+            "import": "./dist/http.js",
+            "require": "./dist/http.cjs",
+            "types": "./dist/types/http.d.ts"
+        },
+        "./preact/apis/iso": {
+            "import": "./dist/preact/apis/iso.js",
+            "require": "./dist/preact/apis/iso.cjs",
+            "types": "./dist/types/preact/apis/iso.d.ts"
+        }
+    },
+    "sideEffects": ["./src/resources/init-env.ts", "./src/cfp.ts", "./src/geo.ts", "./src/http.ts", "./src/index.ts", "./src/preact/apis/iso.tsx"],
+    "module": "./dist/index.js",
+    "main": "./dist/index.cjs",
+    "browser": "",
+    "unpkg": "./dist/index.js",
+    "types": "./dist/types/index.d.ts",
+    "typesVersions": {
+        ">=3.1": {
+            "./*": ["./dist/types/*"]
+        }
+    },
+    "dependencies": {},
+    "peerDependencies": {
+        "@clevercanyon/utilities": "^1.0.262",
+        "@clevercanyon/utilities.cfw": "^1.0.99",
+        "@clevercanyon/utilities.web": "^1.0.70"
+    },
+    "peerDependenciesMeta": {},
+    "optionalDependencies": {},
+    "bundleDependencies": [],
+    "devDependencies": {
+        "@clevercanyon/dev-deps": "^1.0.227"
+    },
+    "overrides": {},
+    "cpu": ["x64", "arm64"],
+    "os": ["darwin", "linux"],
+    "engines": {
+        "node": "^19.1.0 || ^20.5.1",
+        "npm": "^8.19.3 || ^9.2.0"
+    },
+    "config": {
+        "c10n": {
+            "&": {
+                "dotfiles": {
+                    "lock": []
+                },
+                "build": {
+                    "appType": "lib",
+                    "targetEnv": "cfp",
+                    "entryFiles": ["./src/*.{ts,tsx}", "./src/preact/*/*.{ts,tsx}"]
+                },
+                "ssrBuild": {
+                    "appType": "",
+                    "targetEnv": "",
+                    "entryFiles": []
+                },
+                "github": {
+                    "teams": {
+                        "engineers": "pull",
+                        "architects": "push"
+                    },
+                    "labels": {},
+                    "configVersion": "1.0.9",
+                    "envsVersion": ""
+                },
+                "npmjs": {
+                    "configVersions": "1.0.9,1.0.9"
+                }
+            }
+        }
+    }
 }
