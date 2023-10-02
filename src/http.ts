@@ -29,7 +29,7 @@ export const prepareDefaultHeaders = (options: DefaultHeaderOptions): string => 
     }
     let securityHeaders = ''; // Initializes security headers.
 
-    for (const [name, value] of Object.entries(opts.isC10n ? $http.c10nSecurityHeaders : $http.defaultSecurityHeaders)) {
+    for (const [name, value] of Object.entries(opts.isC10n ? $http.c10nSecurityHeaders() : $http.defaultSecurityHeaders())) {
         securityHeaders += (securityHeaders ? '\n  ' : '') + name + ': ' + value;
     }
     return $str.dedent(`
