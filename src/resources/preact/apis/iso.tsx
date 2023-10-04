@@ -2,8 +2,6 @@
  * Utility class.
  */
 
-import '../../init-env.ts';
-
 import { $http, $preact, type $type } from '@clevercanyon/utilities';
 import { $cfp } from '../../../index.ts';
 
