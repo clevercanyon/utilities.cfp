@@ -92,6 +92,8 @@ export const handleFetchCache = async (route: Route, feData: FetchEventData): Pr
     const response = await route(feData);
 
     if ('GET' === request.method && 206 !== response.status && '*' !== response.headers.get('vary')) {
+        // Cloudflare will not actually cache if response headers say not to cache.
+        // For further details regarding `cache.put()`; {@see https://o5p.me/gMv7W2}.
         ctx.waitUntil(cache.put(request, response.clone()));
     }
     return response;
