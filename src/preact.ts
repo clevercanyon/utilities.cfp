@@ -2,9 +2,9 @@
  * Utility class.
  */
 
-import './resources/init.ts';
+import '#@init.ts';
 
 /**
  * Exports our Preact APIs.
  */
-export * as iso from './resources/preact/apis/iso.tsx';
+export * as iso from '#@preact/apis/iso.tsx';

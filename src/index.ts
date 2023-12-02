@@ -2,9 +2,9 @@
  * Utility exports.
  */
 
-import './resources/init.ts';
+import '#@init.ts';
 
-export * as $cfp from './cfp.ts';
-export * as $geo from './geo.ts';
-export * as $http from './http.ts';
-export * as $preact from './preact.ts';
+export * as $cfp from '#cfp.ts';
+export * as $geo from '#geo.ts';
+export * as $http from '#http.ts';
+export * as $preact from '#preact.ts';

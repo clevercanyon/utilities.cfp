@@ -2,10 +2,10 @@
  * Utility class.
  */
 
-import './resources/init.ts';
+import '#@init.ts';
 
+import { $cfp } from '#index.ts';
 import type { $type } from '@clevercanyon/utilities';
-import { $cfp } from './index.ts';
 
 /**
  * Gets geo property.
