@@ -5,7 +5,7 @@
 import '#@init.ts';
 
 import { $cfp } from '#index.ts';
-import type { $type } from '@clevercanyon/utilities';
+import { type $type } from '@clevercanyon/utilities';
 
 /**
  * Gets geo property.

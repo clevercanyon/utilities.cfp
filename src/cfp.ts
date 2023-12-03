@@ -4,8 +4,7 @@
 
 import '#@init.ts';
 
-import type { $type } from '@clevercanyon/utilities';
-import { $env, $http, $url } from '@clevercanyon/utilities';
+import { $env, $http, $url, type $type } from '@clevercanyon/utilities';
 
 const cache = (caches as unknown as $type.cf.CacheStorage).default;
 
