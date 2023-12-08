@@ -362,6 +362,10 @@ export default /* not async compatible */ ({ themesConfig } = {}) => {
                         from: { opacity: 0 },
                         to: { opacity: 1 },
                     },
+                    'subtle-fade-in': {
+                        from: { opacity: 0.25 },
+                        to: { opacity: 1 },
+                    },
                     'fade-out': {
                         from: { opacity: 1 },
                         to: { opacity: 0 },
@@ -370,6 +374,7 @@ export default /* not async compatible */ ({ themesConfig } = {}) => {
                 animation: {
                     'fade-in': 'fade-in 150ms linear',
                     'fade-out': 'fade-out 150ms linear',
+                    'subtle-fade-in': 'subtle-fade-in 150ms linear',
                 },
             },
         },

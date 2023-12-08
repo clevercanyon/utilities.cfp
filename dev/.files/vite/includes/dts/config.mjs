@@ -19,7 +19,7 @@
  */
 export default async ({ distDir }) => {
     return (await import('vite-plugin-dts')).default({
-        // logLevel: 'error',
+        logLevel: 'error',
         outDir: distDir + '/types',
     });
 };

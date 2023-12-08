@@ -35,7 +35,7 @@ export const prepareDefaultHeaders = (options: DefaultHeaderOptions): string => 
     return $str.dedent(`
 		/*
 		  ${securityHeaders}
-		  vary: origin, accept, accept-language, accept-encoding
+		  vary: origin
 
 		/assets/*
 		  access-control-allow-origin: *

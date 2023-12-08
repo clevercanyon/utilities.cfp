@@ -129,7 +129,8 @@ export default async ({ mode, command, isSsrBuild: isSSRBuild }) => {
      */
     const peerDepKeys = Object.keys(pkg.peerDependencies || {});
     const targetEnvIsServer = ['cfw', 'node'].includes(targetEnv);
-    const minifyEnable = 'dev' !== mode && !['lib'].includes(appType);
+    const minifyEnable = !['lib'].includes(appType) && !['dev'].includes(mode);
+    const sourcemapsEnable = ['dev', 'stage'].includes(mode); // Sourcemaps only in these modes.
     const vitestSandboxEnable = process.env.VITEST && $str.parseValue(String(process.env.VITEST_SANDBOX_ENABLE || ''));
     const vitestExamplesEnable = process.env.VITEST && $str.parseValue(String(process.env.VITEST_EXAMPLES_ENABLE || ''));
     const prefreshEnable = process.env.VITE_PREFRESH_ENABLE && !process.env.VITEST && 'serve' === command && 'dev' === mode && ['spa', 'mpa'].includes(appType);
@@ -168,6 +169,11 @@ export default async ({ mode, command, isSsrBuild: isSSRBuild }) => {
     }); // prettier-ignore
 
     /**
+     * Updates `sideEffects` to full set established by package update routines.
+     */
+    (sideEffects.length = 0), pkgUpdates.sideEffects.forEach((s) => sideEffects.push(s));
+
+    /**
      * Configures plugins for Vite.
      */
     const plugins = [
@@ -175,7 +181,7 @@ export default async ({ mode, command, isSsrBuild: isSSRBuild }) => {
         await viteIconsConfig({}),
         await viteMDXConfig({ projDir }),
         await viteEJSConfig({ mode, projDir, srcDir, pkg, env }),
-        await viteMinifyConfig({ mode }),
+        await viteMinifyConfig({ minifyEnable }),
         await viteDTSConfig({ distDir }),
         await viteC10nPostProcessingConfig({
             mode, command, isSSRBuild, projDir, distDir,
@@ -187,12 +193,12 @@ export default async ({ mode, command, isSsrBuild: isSSRBuild }) => {
     /**
      * Configures esbuild for Vite.
      */
-    const esbuildConfig = await viteESBuildConfig({}); // Minimal config; no props at this time.
+    const esbuildConfig = await viteESBuildConfig({}); // Minimal config. No props at this time.
 
     /**
      * Configures rollup for Vite.
      */
-    const rollupConfig = await viteRollupConfig({ projDir, srcDir, distDir, a16sDir, appType, appEntries, peerDepKeys, minifyEnable, sideEffects: pkgUpdates.sideEffects });
+    const rollupConfig = await viteRollupConfig({ projDir, srcDir, distDir, a16sDir, appType, appEntries, peerDepKeys, minifyEnable, sideEffects });
 
     /**
      * Configures tests for Vite.
@@ -241,12 +247,14 @@ export default async ({ mode, command, isSsrBuild: isSSRBuild }) => {
         server: {
             host: '0.0.0.0', // All.
             port: 443, // Default https.
+            strictPort: true, // Only use 443.
             open: false, // Not automatically.
             https: { key: sslKey, cert: sslCrt },
         },
         preview: {
             host: '0.0.0.0', // All.
             port: 443, // Default https.
+            strictPort: true, // Only use 443.
             open: false, // Not automatically.
             https: { key: sslKey, cert: sslCrt },
         },
@@ -284,7 +292,7 @@ export default async ({ mode, command, isSsrBuild: isSSRBuild }) => {
 
             manifest: !isSSRBuild ? 'vite/manifest.json' : false, // Enables manifest of asset locations.
             ssrManifest: isSSRBuild ? 'vite/ssr-manifest.json' : false, // Enables SSR manifest of asset locations.
-            sourcemap: 'dev' === mode ? 'inline' : false, // Enables creation of sourcemaps; i.e., for debugging.
+            sourcemap: sourcemapsEnable, // Enables creation of sourcemaps; i.e., purely for debugging purposes.
 
             minify: minifyEnable ? 'esbuild' : false, // {@see https://o5p.me/pkJ5Xz}.
             cssMinify: minifyEnable ? 'lightningcss' : false, // {@see https://o5p.me/h0Hgj3}.
