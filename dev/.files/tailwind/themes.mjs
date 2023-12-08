@@ -301,17 +301,10 @@ const baseConfigThemes = /* not async compatible */ () => {
         extend: {
             /**
              * Defines font families.
-             *
-             * If font families are customized in ways that introduce new Google fonts, then those new Google fonts must
-             * be declared as an SCSS map in order to configure our Tailwind layers. The variable is `$google-fonts`.
-             * Add the variale to your `./index.scss` file before `@use '../dev/.files/tailwind/layers';`.
-             *
-             *     $google-fonts: ( 'Georama': 'ital,wght@0,100..900;1,100..900' );
              */
             fontFamily: {
                 sans: [
-                    'Georama', //
-                    'ui-sans-serif',
+                    'ui-sans-serif', //
                     'sans-serif',
                 ],
                 serif: [

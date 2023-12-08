@@ -9,7 +9,7 @@
 import { visit as unistVisit } from 'unist-util-visit';
 
 /**
- * Modifies `remark-gfm` footnote anchors to enforce a `~` prefix.
+ * Modifies `remark-gfm` footnote anchors, shortening ID references and enforcing a `~` prefix.
  */
 export default () => {
     return (tree) => {
