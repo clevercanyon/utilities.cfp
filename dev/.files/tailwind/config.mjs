@@ -36,7 +36,7 @@ const projDir = path.resolve(__dirname, '../../..');
  * Defines Tailwind configuration.
  *
  * Jiti, which is used by Tailwind to load ESM config files, doesn’t support top-level await. Thus, we cannot use async
- * functionality here. Consider `make-synchronous` (already in dev-deps) if necessary. {@see https://o5p.me/1odhxy}.
+ * functionality here. Consider using a CLI request to acquire resources, if necessary. {@see https://o5p.me/1odhxy}.
  */
 export default /* not async compatible */ ({ themesConfig } = {}) => {
     /**
@@ -321,7 +321,7 @@ export default /* not async compatible */ ({ themesConfig } = {}) => {
                                 verticalAlign: 'middle',
 
                                 background: 'rgb(var(--colors-color-neutral), .25)',
-                                border: '1px solid rgb(var(--colors-color-neutral-bdr))',
+                                border: '1px solid rgb(var(--colors-color-neutral-line))',
                                 borderRadius: '.15em',
                             },
                             '.task-list-item > input:checked::before': {

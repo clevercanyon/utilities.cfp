@@ -82,12 +82,17 @@ export default async ({ mode, command, isSsrBuild: isSSRBuild }) => {
     if (isSSRBuild) appEnvPrefixes.push('SSR_APP_'); // Added to SSR builds.
     const env = loadEnv(mode, envsDir, appEnvPrefixes); // Includes `APP_IS_VITE`.
 
+    const appBaseURL = env.APP_BASE_URL || ''; // e.g., `https://example.com/`, `https://example.com/base`.
+    // A base URL is only required for some app types; e.g., `spa|mpa`. See validation below for details.
+    process.env._APP_BASE_URL = appBaseURL; // Informs; e.g., brand acquisition via Tailwind configuration.
+
     const staticDefs = {
         ['$$__' + appEnvPrefixes[0] + 'PKG_NAME__$$']: pkg.name || '',
         ['$$__' + appEnvPrefixes[0] + 'PKG_VERSION__$$']: pkg.version || '',
         ['$$__' + appEnvPrefixes[0] + 'PKG_REPOSITORY__$$']: pkg.repository || '',
         ['$$__' + appEnvPrefixes[0] + 'PKG_HOMEPAGE__$$']: pkg.homepage || '',
         ['$$__' + appEnvPrefixes[0] + 'PKG_BUGS__$$']: pkg.bugs || '',
+        ['$$__' + appEnvPrefixes[0] + 'BASE_URL__$$']: appBaseURL || '',
         ['$$__' + appEnvPrefixes[0] + 'BUILD_TIME_YMD__$$']: $time.now().toYMD() || '',
     };
     Object.keys(env) // Add string env vars to static defines.
@@ -98,9 +103,6 @@ export default async ({ mode, command, isSsrBuild: isSSRBuild }) => {
     /**
      * App type, target, path, and related vars.
      */
-    const appBaseURL = env.APP_BASE_URL || ''; // e.g., `https://example.com/`, `https://example.com/base`.
-    // A base URL is only required for some app types; e.g., `spa|mpa`. See validation below for details.
-
     const appType = $obp.get(pkg, 'config.c10n.&.' + (isSSRBuild ? 'ssrBuild' : 'build') + '.appType') || 'cma';
     const targetEnv = $obp.get(pkg, 'config.c10n.&.' + (isSSRBuild ? 'ssrBuild' : 'build') + '.targetEnv') || 'any';
     const entryFiles = $obp.get(pkg, 'config.c10n.&.' + (isSSRBuild ? 'ssrBuild' : 'build') + '.entryFiles') || [];
@@ -185,7 +187,7 @@ export default async ({ mode, command, isSsrBuild: isSSRBuild }) => {
         await viteDTSConfig({ distDir }),
         await viteC10nPostProcessingConfig({
             mode, command, isSSRBuild, projDir, distDir,
-            pkg, env, appType, targetEnv, staticDefs, pkgUpdates
+            pkg, env, appBaseURL, appType, targetEnv, staticDefs, pkgUpdates
         }), // prettier-ignore
         ...(prefreshEnable ? [await vitePrefreshConfig({})] : []),
     ];

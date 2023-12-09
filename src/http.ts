@@ -45,7 +45,7 @@ export const prepareDefaultHeaders = (options: DefaultHeaderOptions): string => 
 		  access-control-allow-origin: *
 		  cache-control: public, must-revalidate, max-age=86400, s-maxage=86400, stale-while-revalidate=86400, stale-if-error=86400
 
-		/robots.txt
+		/sitemap.xml
 		  access-control-allow-origin: *
 		  cache-control: public, must-revalidate, max-age=86400, s-maxage=86400, stale-while-revalidate=86400, stale-if-error=86400
 
@@ -53,7 +53,7 @@ export const prepareDefaultHeaders = (options: DefaultHeaderOptions): string => 
 		  access-control-allow-origin: *
 		  cache-control: public, must-revalidate, max-age=86400, s-maxage=86400, stale-while-revalidate=86400, stale-if-error=86400
 
-		/sitemap.xml
+		/robots.txt
 		  access-control-allow-origin: *
 		  cache-control: public, must-revalidate, max-age=86400, s-maxage=86400, stale-while-revalidate=86400, stale-if-error=86400
 

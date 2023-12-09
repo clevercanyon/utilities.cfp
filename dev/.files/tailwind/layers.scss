@@ -51,7 +51,7 @@
     }
 
     .basic-header {
-        @apply border-color-header-bdr bg-color-header text-color-header-fg;
+        @apply border-color-header-line bg-color-header text-color-header-fg;
 
         :where(a, .link):not(:where(.p, .p *, ._, ._ *)) {
             @apply text-color-header-link;
@@ -63,7 +63,7 @@
     }
 
     .basic-sidebar {
-        @apply border-color-sidebar-bdr bg-color-sidebar text-color-sidebar-fg;
+        @apply border-color-sidebar-line bg-color-sidebar text-color-sidebar-fg;
 
         :where(a, .link):not(:where(.p, .p *, ._, ._ *)) {
             @apply text-color-sidebar-link;
@@ -75,7 +75,7 @@
     }
 
     .basic-footer {
-        @apply border-color-footer-bdr bg-color-footer text-color-footer-fg;
+        @apply border-color-footer-line bg-color-footer text-color-footer-fg;
 
         :where(a, .link):not(:where(.p, .p *, ._, ._ *)) {
             @apply text-color-footer-link;
