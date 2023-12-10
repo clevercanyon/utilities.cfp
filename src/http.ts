@@ -4,35 +4,79 @@
 
 import '#@initialize.ts';
 
-import { $http, $json, $obj, $str } from '@clevercanyon/utilities';
+import { $http, $json, $obj, $str, $time, type $type } from '@clevercanyon/utilities';
 
 /**
  * Defines types.
  */
-export type DefaultHeaderOptions = {
-    appType: string;
-    isC10n?: boolean;
+export type PrepareDefaultWellKnownGPCOptions = { appType: string; isC10n?: boolean };
+export type PrepareDefaultWellKnownSecurityOptions = { appType: string; brand: $type.Brand; isC10n?: boolean };
+export type PrepareDefaultHeaderOptions = { appType: string; isC10n?: boolean };
+export type PrepareDefaultRedirectOptions = { appType: string; isC10n?: boolean };
+export type PrepareDefaultRouteOptions = { appType: string; isC10n?: boolean };
+
+/**
+ * Prepares default `/.well-known/gpc.json` file for a Cloudflare Pages site.
+ *
+ * @param   options Options. Pass `appType`, at minimum; {@see PrepareDefaultWellKnownGPCOptions}.
+ *
+ * @returns         Default `/.well-known/gpc.json` file for a Cloudflare Pages site.
+ *
+ * @see https://o5p.me/IFDw0f
+ */
+export const prepareDefaultWellKnownGPC = (options: PrepareDefaultWellKnownGPCOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultWellKnownGPCOptions>;
+
+    if (!['spa', 'mpa'].includes(opts.appType)) {
+        return ''; // Not applicable.
+    }
+    return $json.stringify({
+        gpc: true,
+        lastUpdate: $time.now().toYMD(),
+    });
 };
-export type DefaultRedirectOptions = {
-    appType: string;
-    isC10n?: boolean;
-};
-export type DefaultRouteOptions = {
-    appType: string;
-    isC10n?: boolean;
+
+/**
+ * Prepares default `/.well-known/security.txt` file for a Cloudflare Pages site.
+ *
+ * @param   options Options. Pass `appType` and `brand`, at minimum; {@see PrepareDefaultWellKnownSecurityOptions}.
+ *
+ * @returns         Default `/.well-known/security.txt` file for a Cloudflare Pages site.
+ *
+ * @see https://o5p.me/6dgJA5
+ */
+export const prepareDefaultWellKnownSecurity = (options: PrepareDefaultWellKnownSecurityOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultWellKnownSecurityOptions>;
+
+    const brandContacts = opts.brand.contacts;
+    const brandSocialProfiles = opts.brand.socialProfiles;
+
+    const brandFounder = opts.brand.founder;
+    const brandFounderSocialProfiles = brandFounder.socialProfiles;
+
+    if (!['spa', 'mpa'].includes(opts.appType)) {
+        return ''; // Not applicable.
+    }
+    return $str.dedent(`
+        Contact: mailto:${brandContacts.security.email}
+        Contact: ${brandContacts.security.url}
+        Contact: ${brandSocialProfiles.keybase || brandFounderSocialProfiles.keybase || brandContacts.admin.url}
+        Expires: ${$time.now().add(2, 'y').toYMD()}
+        Preferred-Languages: en
+    `);
 };
 
 /**
  * Prepares default `/_headers` file for a Cloudflare Pages site.
  *
- * @param   options Options. Please be sure to pass `appType`, at minimum.
+ * @param   options Options. Pass `appType`, at minimum; {@see PrepareDefaultHeaderOptions}.
  *
  * @returns         Default `/_headers` file for a Cloudflare Pages site.
  *
  * @see https://o5p.me/juElYi
  */
-export const prepareDefaultHeaders = (options: DefaultHeaderOptions): string => {
-    const opts = $obj.defaults({}, options, { appType: '', isC10n: false }) as Required<DefaultHeaderOptions>;
+export const prepareDefaultHeaders = (options: PrepareDefaultHeaderOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultHeaderOptions>;
 
     if (!['spa', 'mpa'].includes(opts.appType)) {
         return ''; // Not applicable.
@@ -105,14 +149,14 @@ export const prepareDefaultHeaders = (options: DefaultHeaderOptions): string => 
 /**
  * Prepares default `/_redirects` file for a Cloudflare Pages site.
  *
- * @param   options Options. Please be sure to pass `appType`, at minimum.
+ * @param   options Options. Pass `appType`, at minimum; {@see PrepareDefaultRedirectOptions}.
  *
  * @returns         Default `/_redirects` file for a Cloudflare Pages site.
  *
  * @see https://o5p.me/YngZH9
  */
-export const prepareDefaultRedirects = (options: DefaultRedirectOptions): string => {
-    const opts = $obj.defaults({}, options, { appType: '', isC10n: false }) as Required<DefaultRedirectOptions>;
+export const prepareDefaultRedirects = (options: PrepareDefaultRedirectOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultRedirectOptions>;
 
     if (!['spa', 'mpa'].includes(opts.appType)) {
         return ''; // Not applicable.
@@ -123,14 +167,14 @@ export const prepareDefaultRedirects = (options: DefaultRedirectOptions): string
 /**
  * Prepares default `/_routes.json` file for a Cloudflare Pages site.
  *
- * @param   options Options. Please be sure to pass `appType`, at minimum.
+ * @param   options Options. Pass `appType`, at minimum; {@see PrepareDefaultRouteOptions}.
  *
  * @returns         Default `/_routes.json` file for a Cloudflare Pages site.
  *
  * @see https://o5p.me/6wu3jg
  */
-export const prepareDefaultRoutes = (options: DefaultRouteOptions): string => {
-    const opts = $obj.defaults({}, options, { appType: '', isC10n: false }) as Required<DefaultRouteOptions>;
+export const prepareDefaultRoutes = (options: PrepareDefaultRouteOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultRouteOptions>;
 
     if (!['spa', 'mpa'].includes(opts.appType)) {
         return ''; // Not applicable.
