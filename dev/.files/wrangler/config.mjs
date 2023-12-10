@@ -177,7 +177,7 @@ export default async () => {
                       dev: {
                           workers_dev: false,
                           vars: wranglerSettings.miniflareDevEnvVar,
-                          build: { command: 'npx @clevercanyon/madrun build --mode=stage' },
+                          build: { command: 'VITE_WRANGLER_MODE=dev npx @clevercanyon/madrun build --mode=dev' },
                       },
                   },
                   // `$ wrangler dev` settings.

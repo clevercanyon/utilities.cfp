@@ -7,7 +7,7 @@
 # @note This entire file will be updated automatically.
 # @note Instead of editing here, please review `./wrangler.mjs`.
 #
-# Last generated using `./wrangler.mjs` Dec 9, 2023 9:08 AM UTC.
+# Last generated using `./wrangler.mjs` Dec 10, 2023 9:59 PM UTC.
 ##
 
 send_metrics = false
@@ -370,6 +370,7 @@ exclude = [
   "dist",
   "!dist",
   ".*",
+  "!.well-known",
   "*.config.*",
   "wrangler.*",
   "tsconfig.*",
@@ -422,7 +423,7 @@ workers_dev = false
   MINIFLARE = "true"
 
   [env.dev.build]
-  command = "npx @clevercanyon/madrun build --mode=stage"
+  command = "VITE_WRANGLER_MODE=dev npx @clevercanyon/madrun build --mode=dev"
 
 [dev]
 local_protocol = "https"

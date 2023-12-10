@@ -2,7 +2,7 @@
  * Utility exports.
  */
 
-import '#@init.ts';
+import '#@initialize.ts';
 
 export * as $cfp from '#cfp.ts';
 export * as $geo from '#geo.ts';

@@ -30,6 +30,11 @@ export default async () => {
             (await import('postcss-simple-vars')).default(),
             (await import('tailwindcss/nesting/index.js')).default(),
 
+            // For some reason, Vite chooses not to resolve `url()` values in CSS whenever they begin with a `#`.
+            // Unfortunate, because our import aliases use `#`. To fix, we prepend `url()` values starting with `#`, with `&#`.
+            // See also: `./dev/.files/bin/includes/import-aliases.mjs` for details regarding alias pattern matching formulation.
+            (await import('postcss-url')).default([{ filter: /./u, url: ({ url }) => (url.startsWith('#') ? '&' + url : url) }]),
+
             // Tailwind CSS plugin.
             (await import('tailwindcss')).default({ config: path.resolve(projDir, './tailwind.config.mjs') }),
 

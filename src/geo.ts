@@ -2,7 +2,7 @@
  * Utility class.
  */
 
-import '#@init.ts';
+import '#@initialize.ts';
 
 import { $cfp } from '#index.ts';
 import { type $type } from '@clevercanyon/utilities';

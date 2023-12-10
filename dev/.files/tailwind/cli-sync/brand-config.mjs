@@ -7,10 +7,10 @@
  * @note Instead of editing here, please review <https://github.com/clevercanyon/skeleton>.
  */
 
-import { $json } from '../../../node_modules/@clevercanyon/utilities/dist/index.js';
-import u from '../bin/includes/utilities.mjs';
+import { $json } from '../../../../node_modules/@clevercanyon/utilities/dist/index.js';
+import u from '../../bin/includes/utilities.mjs';
 
 /**
  * Acquires app’s brand config; i.e., here within a separate CLI process.
  */
-(async () => console.log($json.stringify(await u.brandConfig(), { pretty: true })))();
+console.log($json.stringify(await u.brandConfig(), { pretty: true }));
