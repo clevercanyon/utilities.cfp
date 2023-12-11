@@ -47,7 +47,6 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
     const { ctx, route } = ifeData;
 
     $env.capture('@global', env); // Captures environment vars.
-
     try {
         request = $http.prepareRequest(request, {}) as $type.cf.Request;
         const url = $url.parse(request.url) as $type.cf.URL;
@@ -55,9 +54,9 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
 
         return handleFetchCache(route, feData);
         //
-    } catch (error) {
-        if (error instanceof Response) {
-            return error as unknown as $type.cf.Response;
+    } catch (thrown) {
+        if (thrown instanceof Response) {
+            return thrown as unknown as $type.cf.Response;
         }
         return $http.prepareResponse(request, { status: 500 }) as $type.cf.Response;
     }
