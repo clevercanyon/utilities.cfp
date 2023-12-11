@@ -4,7 +4,7 @@
 
 import '#@initialize.ts';
 
-import { $http, $json, $obj, $str, $time, type $type } from '@clevercanyon/utilities';
+import { $http, $json, $obj, $person, $str, $time, $url, type $type } from '@clevercanyon/utilities';
 
 /**
  * Defines types.
@@ -14,6 +14,9 @@ export type PrepareDefaultWellKnownSecurityOptions = { appType: string; brand: $
 export type PrepareDefaultHeaderOptions = { appType: string; isC10n?: boolean };
 export type PrepareDefaultRedirectOptions = { appType: string; isC10n?: boolean };
 export type PrepareDefaultRouteOptions = { appType: string; isC10n?: boolean };
+export type PrepareDefaultManifestOptions = { appType: string; brand: $type.Brand; isC10n?: boolean };
+export type PrepareDefaultAdsTxtOptions = { appType: string; isC10n?: boolean };
+export type PrepareDefaultHumansTxtOptions = { appType: string; isC10n?: boolean };
 
 /**
  * Prepares default `/.well-known/gpc.json` file for a Cloudflare Pages site.
@@ -30,10 +33,13 @@ export const prepareDefaultWellKnownGPC = (options: PrepareDefaultWellKnownGPCOp
     if (!['spa', 'mpa'].includes(opts.appType)) {
         return ''; // Not applicable.
     }
-    return $json.stringify({
-        gpc: true,
-        lastUpdate: $time.now().toYMD(),
-    });
+    return $json.stringify(
+        {
+            gpc: true,
+            lastUpdate: $time.now().toYMD(),
+        },
+        { pretty: true },
+    );
 };
 
 /**
@@ -199,4 +205,176 @@ export const prepareDefaultRoutes = (options: PrepareDefaultRouteOptions): strin
         },
         { pretty: true },
     );
+};
+
+/**
+ * Prepares default `/manifest.json` file for a Cloudflare Pages site.
+ *
+ * @param   options Options. Pass `appType` and `brand`, at minimum; {@see PrepareDefaultManifestOptions}.
+ *
+ * @returns         Default `/manifest.json` file for a Cloudflare Pages site.
+ *
+ * @see https://o5p.me/xxZtV7
+ */
+export const prepareDefaultManifest = (options: PrepareDefaultManifestOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultManifestOptions>;
+    const brand = opts.brand; // Extracts brand from options passed in.
+
+    if (!['spa', 'mpa'].includes(opts.appType)) {
+        return ''; // Not applicable.
+    }
+    return $json.stringify(
+        {
+            id: $url.toPathQueryHash($url.addQueryVar('utm_source', 'pwa', brand.url)),
+            start_url: $url.toPathQueryHash($url.addQueryVar('utm_source', 'pwa', brand.url)),
+            scope: $str.rTrim($url.parse(brand.url).pathname, '/') + '/',
+
+            display_override: ['standalone', 'browser'],
+            display: 'standalone', // Preferred presentation.
+
+            theme_color: brand.theme.color,
+            background_color: brand.theme.color,
+
+            name: brand.name,
+            short_name: brand.name,
+            description: brand.description,
+
+            icons: [
+                // SVGs.
+                {
+                    type: 'image/svg+xml',
+                    src: $url.toPathQueryHash(brand.icon.svg),
+                    sizes: String(brand.icon.width) + 'x' + String(brand.icon.height),
+                    purpose: 'any maskable',
+                },
+                {
+                    type: 'image/svg+xml',
+                    src: $url.toPathQueryHash(brand.icon.svg),
+                    sizes: '512x512', // Required size in Chrome.
+                    purpose: 'any maskable',
+                },
+                {
+                    type: 'image/svg+xml',
+                    src: $url.toPathQueryHash(brand.icon.svg),
+                    sizes: '192x192', // Required size in Chrome.
+                    purpose: 'any maskable',
+                },
+                // PNGs.
+                {
+                    type: 'image/png',
+                    src: $url.toPathQueryHash(brand.icon.png),
+                    sizes: String(brand.icon.width) + 'x' + String(brand.icon.height),
+                    purpose: 'any maskable',
+                },
+                {
+                    type: 'image/png',
+                    src: $url.toPathQueryHash(brand.icon.png),
+                    sizes: '512x512', // Required size in Chrome.
+                    purpose: 'any maskable',
+                },
+                {
+                    type: 'image/png',
+                    src: $url.toPathQueryHash(brand.icon.png),
+                    sizes: '192x192', // Required size in Chrome.
+                    purpose: 'any maskable',
+                },
+            ],
+            screenshots: [
+                // Wide.
+                {
+                    type: 'image/png',
+                    form_factor: 'wide',
+                    src: $url.toPathQueryHash(brand.ogImage.png),
+                    sizes: String(brand.ogImage.width) + 'x' + String(brand.ogImage.height),
+                },
+                // Narrow.
+                {
+                    type: 'image/png',
+                    form_factor: 'narrow',
+                    src: $url.toPathQueryHash(brand.ogImage.png),
+                    sizes: String(brand.ogImage.width) + 'x' + String(brand.ogImage.height),
+                },
+            ],
+        },
+        { pretty: true },
+    );
+};
+
+/**
+ * Prepares default `/ads.txt` file for a Cloudflare Pages site.
+ *
+ * @param   options Options. Pass `appType`, at minimum; {@see PrepareDefaultAdsTxtOptions}.
+ *
+ * @returns         Default `/ads.txt` file for a Cloudflare Pages site.
+ *
+ * @see https://o5p.me/bIeopu
+ */
+export const prepareDefaultAdsTxt = (options: PrepareDefaultAdsTxtOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultAdsTxtOptions>;
+
+    if (!['spa', 'mpa'].includes(opts.appType)) {
+        return ''; // Not applicable.
+    }
+    return ''; // Nothing at this time.
+};
+
+/**
+ * Prepares default `/humans.txt` file for a Cloudflare Pages site.
+ *
+ * @param   options Options. Pass `appType`, at minimum; {@see PrepareDefaultHumansTxtOptions}.
+ *
+ * @returns         Default `/humans.txt` file for a Cloudflare Pages site.
+ *
+ * @see https://o5p.me/3Esxyt
+ */
+export const prepareDefaultHumansTxt = (options: PrepareDefaultHumansTxtOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultHumansTxtOptions>;
+
+    const jaswrks = $person.get('@jaswrks');
+    const brucewrks = $person.get('@brucewrks');
+
+    if (!['spa', 'mpa'].includes(opts.appType)) {
+        return ''; // Not applicable.
+    }
+    return opts.isC10n
+        ? $str.dedent(`
+        Hello human! Welcome to our ./humans.txt file.
+        Aren't you a clever bag of bones and flesh?
+
+        Our website is built by a small team of engineers, designers,
+        researchers, and robots. It is updated continuously and built with
+        more tools and technologies than we can list here. If you'd like to
+        help us out, please contact one of the fine folks mentioned below.
+
+        ---
+
+        Name: ${jaswrks.name}
+        Headline: ${jaswrks.headline}
+        Location: ${jaswrks.location}
+
+        NPM: ${jaswrks.socialProfiles.npm}
+        GitHub: ${jaswrks.socialProfiles.github}
+        Keybase: ${jaswrks.socialProfiles.keybase}
+        Twitter: ${jaswrks.socialProfiles.twitter}
+        LinkedIn: ${jaswrks.socialProfiles.linkedin}
+
+        Technologies: ES2022, HTML5, CSS4
+        Software: JavaScript, Preact, Vite, Cloudflare
+
+        ---
+
+        Name: ${brucewrks.name}
+        Headline: ${brucewrks.headline}
+        Location: ${brucewrks.location}
+
+        NPM: ${brucewrks.socialProfiles.npm}
+        GitHub: ${brucewrks.socialProfiles.github}
+        Keybase: ${brucewrks.socialProfiles.keybase}
+        Twitter: ${brucewrks.socialProfiles.twitter}
+        LinkedIn: ${brucewrks.socialProfiles.linkedin}
+
+        Technologies: ES2022, HTML5, CSS4
+        Software: JavaScript, Preact, Vite, Cloudflare
+    `)
+        : '';
 };
