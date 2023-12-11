@@ -9,14 +9,19 @@ import { $http, $json, $obj, $person, $str, $time, $url, type $type } from '@cle
 /**
  * Defines types.
  */
-export type PrepareDefaultWellKnownGPCOptions = { appType: string; isC10n?: boolean };
-export type PrepareDefaultWellKnownSecurityOptions = { appType: string; brand: $type.Brand; isC10n?: boolean };
-export type PrepareDefaultHeaderOptions = { appType: string; isC10n?: boolean };
-export type PrepareDefaultRedirectOptions = { appType: string; isC10n?: boolean };
-export type PrepareDefaultRouteOptions = { appType: string; isC10n?: boolean };
-export type PrepareDefaultManifestOptions = { appType: string; brand: $type.Brand; isC10n?: boolean };
-export type PrepareDefaultAdsTxtOptions = { appType: string; isC10n?: boolean };
-export type PrepareDefaultHumansTxtOptions = { appType: string; isC10n?: boolean };
+type PreparationOptions = {
+    appType: string;
+    brand: $type.Brand;
+    isC10n?: boolean;
+};
+export type PrepareDefaultWellKnownGPCOptions = PreparationOptions;
+export type PrepareDefaultWellKnownSecurityOptions = PreparationOptions;
+export type PrepareDefaultHeaderOptions = PreparationOptions;
+export type PrepareDefaultRedirectOptions = PreparationOptions;
+export type PrepareDefaultRouteOptions = PreparationOptions;
+export type PrepareDefaultManifestOptions = PreparationOptions;
+export type PrepareDefaultAdsTxtOptions = PreparationOptions;
+export type PrepareDefaultHumansTxtOptions = PreparationOptions;
 
 /**
  * Prepares default `/.well-known/gpc.json` file for a Cloudflare Pages site.
@@ -324,6 +329,8 @@ export const prepareDefaultAdsTxt = (options: PrepareDefaultAdsTxtOptions): stri
  * @param   options Options. Pass `appType`, at minimum; {@see PrepareDefaultHumansTxtOptions}.
  *
  * @returns         Default `/humans.txt` file for a Cloudflare Pages site.
+ *
+ * @review Can we make this more dynamic wrt to which humans are listed?
  *
  * @see https://o5p.me/3Esxyt
  */
