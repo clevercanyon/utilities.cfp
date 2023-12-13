@@ -88,7 +88,7 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
         return $http.prepareResponse(request, {
             status: 500,
             headers: { 'content-type': $mime.contentType('.txt') },
-            body: 'Error Code: ' + ($is.errorCode(thrown) ? thrown.message : 'tQPQ5YXQ'),
+            body: 'Error Code: ' + ($is.errorCode(thrown) ? thrown.message : 'QzdvegcT'),
         }) as $type.cf.Response;
     }
 };
