@@ -4,33 +4,33 @@
 
 import '#@initialize.ts';
 
-import { $app, $env, $http, $to, $url, type $type } from '@clevercanyon/utilities';
+import { $app, $env, $http, $is, $mime, $str, $to, $url, type $type } from '@clevercanyon/utilities';
 
 /**
  * Defines types.
  */
 export type Context = Parameters<$type.cf.PagesFunction>[0];
 
-export type Environment = {
-    readonly D1?: $type.cf.D1Database;
-    readonly R2?: $type.cf.R2Bucket;
-    readonly KV?: $type.cf.KVNamespace;
-    readonly DO?: $type.cf.DurableObjectNamespace;
-    readonly [x: string]: unknown;
-};
+export type Environment = Readonly<{
+    D1?: $type.cf.D1Database;
+    R2?: $type.cf.R2Bucket;
+    KV?: $type.cf.KVNamespace;
+    DO?: $type.cf.DurableObjectNamespace;
+    [x: string]: unknown;
+}>;
 export type Route = (x: FetchEventData) => Promise<$type.cf.Response>;
 
-export type FetchEventData = {
-    readonly request: $type.cf.Request;
-    readonly env: Environment;
-    readonly ctx: Context;
-    readonly route: Route;
-    readonly url: $type.cf.URL;
-};
-export type InitialFetchEventData = {
-    readonly ctx: Context;
-    readonly route: Route;
-};
+export type FetchEventData = Readonly<{
+    request: $type.cf.Request;
+    env: Environment;
+    ctx: Context;
+    route: Route;
+    url: $type.cf.URL;
+}>;
+export type InitialFetchEventData = Readonly<{
+    ctx: Context;
+    route: Route;
+}>;
 
 /**
  * Tracks initialization.
@@ -72,8 +72,9 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
     const { env } = ifeData.ctx;
     const { ctx, route } = ifeData;
 
-    await maybeInitialize(ifeData); // Brand adaptation, env capture.
     try {
+        await maybeInitialize(ifeData); // Brand adaptation, env capture.
+
         request = $http.prepareRequest(request, {}) as $type.cf.Request;
         const url = $url.parse(request.url) as $type.cf.URL;
         const feData = { request, env, ctx, route, url };
@@ -84,7 +85,11 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
         if (thrown instanceof Response) {
             return thrown as unknown as $type.cf.Response;
         }
-        return $http.prepareResponse(request, { status: 500 }) as $type.cf.Response;
+        return $http.prepareResponse(request, {
+            status: 500,
+            headers: { 'content-type': $mime.contentType('.txt') },
+            body: 'Error Code: ' + ($is.error(thrown) && $str.isErrorCode(thrown.message) ? thrown.message : 'tQPQ5YXQ'),
+        }) as $type.cf.Response;
     }
 };
 
