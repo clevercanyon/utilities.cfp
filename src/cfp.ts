@@ -4,7 +4,7 @@
 
 import '#@initialize.ts';
 
-import { $app, $env, $http, $is, $mime, $str, $to, $url, type $type } from '@clevercanyon/utilities';
+import { $app, $env, $http, $is, $mime, $to, $url, type $type } from '@clevercanyon/utilities';
 
 /**
  * Defines types.
@@ -88,7 +88,7 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
         return $http.prepareResponse(request, {
             status: 500,
             headers: { 'content-type': $mime.contentType('.txt') },
-            body: 'Error Code: ' + ($is.error(thrown) && $str.isErrorCode(thrown.message) ? thrown.message : 'tQPQ5YXQ'),
+            body: 'Error Code: ' + ($is.errorCode(thrown) ? thrown.message : 'tQPQ5YXQ'),
         }) as $type.cf.Response;
     }
 };
