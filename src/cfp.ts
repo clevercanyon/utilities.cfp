@@ -4,9 +4,7 @@
 
 import '#@initialize.ts';
 
-import { $env, $http, $url, type $type } from '@clevercanyon/utilities';
-
-const cache = (caches as unknown as $type.cf.CacheStorage).default;
+import { $app, $env, $http, $to, $url, type $type } from '@clevercanyon/utilities';
 
 /**
  * Defines types.
@@ -35,6 +33,34 @@ export type InitialFetchEventData = {
 };
 
 /**
+ * Tracks initialization.
+ */
+let initialized = false;
+
+/**
+ * Defines cache to use for HTTP requests.
+ */
+const cache = (caches as unknown as $type.cf.CacheStorage).default;
+
+/**
+ * Handles worker initialization.
+ */
+const maybeInitialize = async (ifeData: InitialFetchEventData): Promise<void> => {
+    if (initialized) return;
+    initialized = true;
+
+    const { request } = ifeData.ctx,
+        { env } = ifeData.ctx;
+
+    if (request.cf?.pagesHostName) {
+        $app.adaptBrand($to.string(request.cf.pagesHostName));
+    } else {
+        $app.adaptBrand($to.string($url.tryParse(request.url)?.host));
+    }
+    $env.capture('@global', env);
+};
+
+/**
  * Handles fetch events.
  *
  * @param   feData Initial fetch event data.
@@ -46,7 +72,7 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
     const { env } = ifeData.ctx;
     const { ctx, route } = ifeData;
 
-    $env.capture('@global', env); // Captures environment vars.
+    await maybeInitialize(ifeData); // Brand adaptation, env capture.
     try {
         request = $http.prepareRequest(request, {}) as $type.cf.Request;
         const url = $url.parse(request.url) as $type.cf.URL;
