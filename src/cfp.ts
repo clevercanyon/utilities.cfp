@@ -4,7 +4,7 @@
 
 import '#@initialize.ts';
 
-import { $app, $env, $error, $http, $mime, $to, $url, type $type } from '@clevercanyon/utilities';
+import { $env, $error, $http, $mime, $url, type $type } from '@clevercanyon/utilities';
 
 /**
  * Defines types.
@@ -49,14 +49,7 @@ const maybeInitialize = async (ifeData: InitialFetchEventData): Promise<void> =>
     if (initialized) return;
     initialized = true;
 
-    const { request } = ifeData.ctx,
-        { env } = ifeData.ctx;
-
-    if (request.cf?.pagesHostName) {
-        $app.adaptBrand($to.string(request.cf.pagesHostName));
-    } else {
-        $app.adaptBrand($to.string($url.tryParse(request.url)?.host));
-    }
+    const { env } = ifeData.ctx;
     $env.capture('@global', env);
 };
 
@@ -73,7 +66,7 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
     const { ctx, route } = ifeData;
 
     try {
-        await maybeInitialize(ifeData); // Brand adaptation, env capture.
+        await maybeInitialize(ifeData);
 
         request = $http.prepareRequest(request, {}) as $type.cf.Request;
         const url = $url.parse(request.url) as $type.cf.URL;
