@@ -254,7 +254,7 @@ export const prepareDefaultManifest = (options: PrepareDefaultManifestOptions): 
                     type: 'image/svg+xml',
                     src: $url.toPathQueryHash(brand.icon.svg),
                     sizes: String(brand.icon.width) + 'x' + String(brand.icon.height),
-                    purpose: 'any maskable',
+                    purpose: 'any',
                 },
                 {
                     type: 'image/svg+xml',
@@ -273,7 +273,7 @@ export const prepareDefaultManifest = (options: PrepareDefaultManifestOptions): 
                     type: 'image/png',
                     src: $url.toPathQueryHash(brand.icon.png),
                     sizes: String(brand.icon.width) + 'x' + String(brand.icon.height),
-                    purpose: 'any maskable',
+                    purpose: 'any',
                 },
                 {
                     type: 'image/png',
