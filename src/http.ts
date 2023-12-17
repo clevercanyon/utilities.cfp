@@ -11,6 +11,7 @@ import { $http, $json, $obj, $person, $str, $time, $url, type $type } from '@cle
  */
 type PreparationOptions = {
     appType: string;
+    baseURL: string;
     brand: $type.Brand;
     isC10n?: boolean;
 };
@@ -22,11 +23,14 @@ export type PrepareDefaultRouteOptions = PreparationOptions;
 export type PrepareDefaultManifestOptions = PreparationOptions;
 export type PrepareDefaultAdsTxtOptions = PreparationOptions;
 export type PrepareDefaultHumansTxtOptions = PreparationOptions;
+export type PrepareDefaultRobotsTxtOptions = PreparationOptions & {
+    allow: boolean; // Whether to allow robots.
+};
 
 /**
  * Prepares default `/.well-known/gpc.json` file for a Cloudflare Pages site.
  *
- * @param   options Options. Pass `appType`, at minimum; {@see PrepareDefaultWellKnownGPCOptions}.
+ * @param   options Options. Some required; {@see PrepareDefaultWellKnownGPCOptions}.
  *
  * @returns         Default `/.well-known/gpc.json` file for a Cloudflare Pages site.
  *
@@ -50,7 +54,7 @@ export const prepareDefaultWellKnownGPC = (options: PrepareDefaultWellKnownGPCOp
 /**
  * Prepares default `/.well-known/security.txt` file for a Cloudflare Pages site.
  *
- * @param   options Options. Pass `appType` and `brand`, at minimum; {@see PrepareDefaultWellKnownSecurityOptions}.
+ * @param   options Options. Some required {@see PrepareDefaultWellKnownSecurityOptions}.
  *
  * @returns         Default `/.well-known/security.txt` file for a Cloudflare Pages site.
  *
@@ -80,7 +84,7 @@ export const prepareDefaultWellKnownSecurity = (options: PrepareDefaultWellKnown
 /**
  * Prepares default `/_headers` file for a Cloudflare Pages site.
  *
- * @param   options Options. Pass `appType`, at minimum; {@see PrepareDefaultHeaderOptions}.
+ * @param   options Options. Some required; {@see PrepareDefaultHeaderOptions}.
  *
  * @returns         Default `/_headers` file for a Cloudflare Pages site.
  *
@@ -160,7 +164,7 @@ export const prepareDefaultHeaders = (options: PrepareDefaultHeaderOptions): str
 /**
  * Prepares default `/_redirects` file for a Cloudflare Pages site.
  *
- * @param   options Options. Pass `appType`, at minimum; {@see PrepareDefaultRedirectOptions}.
+ * @param   options Options. Some required; {@see PrepareDefaultRedirectOptions}.
  *
  * @returns         Default `/_redirects` file for a Cloudflare Pages site.
  *
@@ -178,7 +182,7 @@ export const prepareDefaultRedirects = (options: PrepareDefaultRedirectOptions):
 /**
  * Prepares default `/_routes.json` file for a Cloudflare Pages site.
  *
- * @param   options Options. Pass `appType`, at minimum; {@see PrepareDefaultRouteOptions}.
+ * @param   options Options. Some required; {@see PrepareDefaultRouteOptions}.
  *
  * @returns         Default `/_routes.json` file for a Cloudflare Pages site.
  *
@@ -215,7 +219,7 @@ export const prepareDefaultRoutes = (options: PrepareDefaultRouteOptions): strin
 /**
  * Prepares default `/manifest.json` file for a Cloudflare Pages site.
  *
- * @param   options Options. Pass `appType` and `brand`, at minimum; {@see PrepareDefaultManifestOptions}.
+ * @param   options Options. Some required; {@see PrepareDefaultManifestOptions}.
  *
  * @returns         Default `/manifest.json` file for a Cloudflare Pages site.
  *
@@ -308,7 +312,7 @@ export const prepareDefaultManifest = (options: PrepareDefaultManifestOptions): 
 /**
  * Prepares default `/ads.txt` file for a Cloudflare Pages site.
  *
- * @param   options Options. Pass `appType`, at minimum; {@see PrepareDefaultAdsTxtOptions}.
+ * @param   options Options. Some required; {@see PrepareDefaultAdsTxtOptions}.
  *
  * @returns         Default `/ads.txt` file for a Cloudflare Pages site.
  *
@@ -326,7 +330,7 @@ export const prepareDefaultAdsTxt = (options: PrepareDefaultAdsTxtOptions): stri
 /**
  * Prepares default `/humans.txt` file for a Cloudflare Pages site.
  *
- * @param   options Options. Pass `appType`, at minimum; {@see PrepareDefaultHumansTxtOptions}.
+ * @param   options Options. Some required; {@see PrepareDefaultHumansTxtOptions}.
  *
  * @returns         Default `/humans.txt` file for a Cloudflare Pages site.
  *
@@ -384,4 +388,44 @@ export const prepareDefaultHumansTxt = (options: PrepareDefaultHumansTxtOptions)
         Software: JavaScript, Preact, Vite, Cloudflare
     `)
         : '';
+};
+
+/**
+ * Prepares default `/robots.txt` file for a Cloudflare Pages site.
+ *
+ * @param   options Options. Some required; {@see PrepareDefaultRobotsTxtOptions}.
+ *
+ * @returns         Default `/robots.txt` file for a Cloudflare Pages site.
+ *
+ * @see https://o5p.me/jYWihV
+ */
+export const prepareDefaultRobotsTxt = (options: PrepareDefaultRobotsTxtOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultRobotsTxtOptions>;
+    const baseURLResolvedNTS = $str.rTrim(new URL('./', opts.baseURL).toString(), '/');
+
+    if (!['spa', 'mpa'].includes(opts.appType)) {
+        return ''; // Not applicable.
+    }
+    const termly = $str.dedent(`
+        user-agent: TermlyBot
+        allow: /
+    `);
+    const sitemap = $str.dedent(`
+        sitemap: ${baseURLResolvedNTS}/sitemap.xml
+    `);
+    const common = opts.isC10n ? termly + '\n\n' + sitemap : sitemap;
+
+    return opts.allow
+        ? $str.dedent(`
+            user-agent: *
+            allow: /
+
+            ${common}
+        `)
+        : $str.dedent(`
+            user-agent: *
+            disallow: /
+
+            ${common}
+        `);
 };
