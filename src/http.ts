@@ -234,9 +234,9 @@ export const prepareDefaultManifest = (options: PrepareDefaultManifestOptions): 
     }
     return $json.stringify(
         {
-            id: $url.toPathQueryHash($url.addQueryVar('utm_source', 'pwa', brand.url)),
-            start_url: $url.toPathQueryHash($url.addQueryVar('utm_source', 'pwa', brand.url)),
-            scope: $str.rTrim($url.parse(brand.url).pathname, '/') + '/',
+            id: $url.toPathQueryHash($url.addQueryVar('utm_source', 'pwa', opts.baseURL)),
+            start_url: $url.toPathQueryHash($url.addQueryVar('utm_source', 'pwa', opts.baseURL)),
+            scope: $str.rTrim($url.parse(opts.baseURL).pathname, '/') + '/',
 
             display_override: ['standalone', 'browser'],
             display: 'standalone', // Preferred presentation.
@@ -249,43 +249,81 @@ export const prepareDefaultManifest = (options: PrepareDefaultManifestOptions): 
             description: brand.description,
 
             icons: [
-                // SVGs.
+                // SVGs (any).
                 {
                     type: 'image/svg+xml',
-                    src: $url.toPathQueryHash(brand.icon.svg),
+                    src: brand.icon.svg,
                     sizes: String(brand.icon.width) + 'x' + String(brand.icon.height),
                     purpose: 'any',
                 },
                 {
                     type: 'image/svg+xml',
-                    src: $url.toPathQueryHash(brand.icon.svg),
-                    sizes: '512x512', // Required size in Chrome.
-                    purpose: 'any maskable',
+                    src: brand.icon.svg,
+                    sizes: '512x512',
+                    purpose: 'any',
                 },
                 {
                     type: 'image/svg+xml',
-                    src: $url.toPathQueryHash(brand.icon.svg),
-                    sizes: '192x192', // Required size in Chrome.
-                    purpose: 'any maskable',
+                    src: brand.icon.svg,
+                    sizes: '192x192',
+                    purpose: 'any',
                 },
-                // PNGs.
+                // SVGs (maskable).
+                {
+                    type: 'image/svg+xml',
+                    src: brand.icon.svg,
+                    sizes: String(brand.icon.width) + 'x' + String(brand.icon.height),
+                    purpose: 'maskable',
+                },
+                {
+                    type: 'image/svg+xml',
+                    src: brand.icon.svg,
+                    sizes: '512x512',
+                    purpose: 'maskable',
+                },
+                {
+                    type: 'image/svg+xml',
+                    src: brand.icon.svg,
+                    sizes: '192x192',
+                    purpose: 'maskable',
+                },
+                // PNGs (any).
                 {
                     type: 'image/png',
-                    src: $url.toPathQueryHash(brand.icon.png),
+                    src: brand.icon.png,
                     sizes: String(brand.icon.width) + 'x' + String(brand.icon.height),
                     purpose: 'any',
                 },
                 {
                     type: 'image/png',
-                    src: $url.toPathQueryHash(brand.icon.png),
-                    sizes: '512x512', // Required size in Chrome.
-                    purpose: 'any maskable',
+                    src: brand.icon.png,
+                    sizes: '512x512',
+                    purpose: 'any',
                 },
                 {
                     type: 'image/png',
-                    src: $url.toPathQueryHash(brand.icon.png),
-                    sizes: '192x192', // Required size in Chrome.
-                    purpose: 'any maskable',
+                    src: brand.icon.png,
+                    sizes: '192x192',
+                    purpose: 'any',
+                },
+                // PNGs (maskable).
+                {
+                    type: 'image/png',
+                    src: brand.icon.png,
+                    sizes: String(brand.icon.width) + 'x' + String(brand.icon.height),
+                    purpose: 'maskable',
+                },
+                {
+                    type: 'image/png',
+                    src: brand.icon.png,
+                    sizes: '512x512',
+                    purpose: 'maskable',
+                },
+                {
+                    type: 'image/png',
+                    src: brand.icon.png,
+                    sizes: '192x192',
+                    purpose: 'maskable',
                 },
             ],
             screenshots: [
@@ -293,14 +331,14 @@ export const prepareDefaultManifest = (options: PrepareDefaultManifestOptions): 
                 {
                     type: 'image/png',
                     form_factor: 'wide',
-                    src: $url.toPathQueryHash(brand.ogImage.png),
+                    src: brand.ogImage.png,
                     sizes: String(brand.ogImage.width) + 'x' + String(brand.ogImage.height),
                 },
                 // Narrow.
                 {
                     type: 'image/png',
                     form_factor: 'narrow',
-                    src: $url.toPathQueryHash(brand.ogImage.png),
+                    src: brand.ogImage.png,
                     sizes: String(brand.ogImage.width) + 'x' + String(brand.ogImage.height),
                 },
             ],
