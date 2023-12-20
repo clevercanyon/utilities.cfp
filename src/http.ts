@@ -200,6 +200,7 @@ export const prepareDefaultRoutes = (options: PrepareDefaultRouteOptions): strin
             include: ['/*'], // Default is a blanket over all paths, which we treat as dynamic routes to functions.
             exclude: [
                 // Now, exclude all static paths from the default blanket over all paths.
+                // We want these common requests to immediately bypass any dynamics, for performance.
                 '/.well-known/*',
                 '/assets/*',
                 '/sitemaps/*',
@@ -210,6 +211,11 @@ export const prepareDefaultRoutes = (options: PrepareDefaultRouteOptions): strin
                 '/robots.txt',
                 '/favicon.ico',
                 '/404.html',
+
+                // Also exclude all known redirects.
+                // We want `_redirects` to control these.
+                '/legal/dsar',
+                '/r/*',
             ],
         },
         { pretty: true },
