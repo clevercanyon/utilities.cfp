@@ -15,12 +15,13 @@ type PreparationOptions = {
     brand: $type.Brand;
     isC10n?: boolean;
 };
-export type PrepareDefaultWellKnownGPCOptions = PreparationOptions;
-export type PrepareDefaultWellKnownSecurityOptions = PreparationOptions;
+export type PrepareDefaultWellKnownGPCJSONOptions = PreparationOptions;
+export type PrepareDefaultWellKnownGPGTxtOptions = PreparationOptions;
+export type PrepareDefaultWellKnownSecurityTxtOptions = PreparationOptions;
 export type PrepareDefaultHeaderOptions = PreparationOptions;
 export type PrepareDefaultRedirectOptions = PreparationOptions;
-export type PrepareDefaultRouteOptions = PreparationOptions;
-export type PrepareDefaultManifestOptions = PreparationOptions;
+export type PrepareDefaultRoutesJSONOptions = PreparationOptions;
+export type PrepareDefaultManifestJSONOptions = PreparationOptions;
 export type PrepareDefaultAdsTxtOptions = PreparationOptions;
 export type PrepareDefaultHumansTxtOptions = PreparationOptions;
 export type PrepareDefaultRobotsTxtOptions = PreparationOptions & {
@@ -30,14 +31,14 @@ export type PrepareDefaultRobotsTxtOptions = PreparationOptions & {
 /**
  * Prepares default `/.well-known/gpc.json` file for a Cloudflare Pages site.
  *
- * @param   options Options. Some required; {@see PrepareDefaultWellKnownGPCOptions}.
+ * @param   options Options. Some required; {@see PrepareDefaultWellKnownGPCJSONOptions}.
  *
  * @returns         Default `/.well-known/gpc.json` file for a Cloudflare Pages site.
  *
  * @see https://o5p.me/IFDw0f
  */
-export const prepareDefaultWellKnownGPC = (options: PrepareDefaultWellKnownGPCOptions): string => {
-    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultWellKnownGPCOptions>;
+export const prepareDefaultWellKnownGPCJSON = (options: PrepareDefaultWellKnownGPCJSONOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultWellKnownGPCJSONOptions>;
 
     if (!['spa', 'mpa'].includes(opts.appType)) {
         return ''; // Not applicable.
@@ -52,22 +53,90 @@ export const prepareDefaultWellKnownGPC = (options: PrepareDefaultWellKnownGPCOp
 };
 
 /**
+ * Prepares default `/.well-known/gpg.txt` file for a Cloudflare Pages site.
+ *
+ * @param   options Options. Some required {@see PrepareDefaultWellKnownGPGTxtOptions}.
+ *
+ * @returns         Default `/.well-known/gpg.txt` file for a Cloudflare Pages site.
+ *
+ * @note `./security.txt` references this file. By default, it contains Clever Canyon’s GPG key.
+ */
+export const prepareDefaultWellKnownGPGTxt = (options: PrepareDefaultWellKnownGPGTxtOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultWellKnownGPGTxtOptions>;
+
+    if (!['spa', 'mpa'].includes(opts.appType)) {
+        return ''; // Not applicable.
+    }
+    return $str.dedent(`
+        -----BEGIN PGP PUBLIC KEY BLOCK-----
+
+        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
+        =7MJh
+        -----END PGP PUBLIC KEY BLOCK-----
+    `);
+};
+
+/**
  * Prepares default `/.well-known/security.txt` file for a Cloudflare Pages site.
  *
- * @param   options Options. Some required {@see PrepareDefaultWellKnownSecurityOptions}.
+ * @param   options Options. Some required {@see PrepareDefaultWellKnownSecurityTxtOptions}.
  *
  * @returns         Default `/.well-known/security.txt` file for a Cloudflare Pages site.
  *
  * @see https://o5p.me/6dgJA5
  */
-export const prepareDefaultWellKnownSecurity = (options: PrepareDefaultWellKnownSecurityOptions): string => {
-    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultWellKnownSecurityOptions>;
+export const prepareDefaultWellKnownSecurityTxt = (options: PrepareDefaultWellKnownSecurityTxtOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultWellKnownSecurityTxtOptions>;
 
-    const brandContacts = opts.brand.contacts;
-    const brandSocialProfiles = opts.brand.socialProfiles;
-
-    const brandFounder = opts.brand.founder;
-    const brandFounderSocialProfiles = brandFounder.socialProfiles;
+    const brandPolicies = opts.brand.policies,
+        brandContacts = opts.brand.contacts;
 
     if (!['spa', 'mpa'].includes(opts.appType)) {
         return ''; // Not applicable.
@@ -75,7 +144,8 @@ export const prepareDefaultWellKnownSecurity = (options: PrepareDefaultWellKnown
     return $str.dedent(`
         Contact: mailto:${brandContacts.security.email}
         Contact: ${brandContacts.security.url}
-        Contact: ${brandSocialProfiles.keybase || brandFounderSocialProfiles.keybase || brandContacts.admin.url}
+        Policy: ${brandPolicies.security}
+        Encryption: ${new URL('./.well-known/gpg.txt', opts.baseURL).toString()}
         Expires: ${$time.now().add(2, 'y').toYMD()}
         Preferred-Languages: en
     `);
@@ -182,14 +252,14 @@ export const prepareDefaultRedirects = (options: PrepareDefaultRedirectOptions):
 /**
  * Prepares default `/_routes.json` file for a Cloudflare Pages site.
  *
- * @param   options Options. Some required; {@see PrepareDefaultRouteOptions}.
+ * @param   options Options. Some required; {@see PrepareDefaultRoutesJSONOptions}.
  *
  * @returns         Default `/_routes.json` file for a Cloudflare Pages site.
  *
  * @see https://o5p.me/6wu3jg
  */
-export const prepareDefaultRoutes = (options: PrepareDefaultRouteOptions): string => {
-    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultRouteOptions>;
+export const prepareDefaultRoutesJSON = (options: PrepareDefaultRoutesJSONOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultRoutesJSONOptions>;
 
     if (!['spa', 'mpa'].includes(opts.appType)) {
         return ''; // Not applicable.
@@ -225,14 +295,14 @@ export const prepareDefaultRoutes = (options: PrepareDefaultRouteOptions): strin
 /**
  * Prepares default `/manifest.json` file for a Cloudflare Pages site.
  *
- * @param   options Options. Some required; {@see PrepareDefaultManifestOptions}.
+ * @param   options Options. Some required; {@see PrepareDefaultManifestJSONOptions}.
  *
  * @returns         Default `/manifest.json` file for a Cloudflare Pages site.
  *
  * @see https://o5p.me/xxZtV7
  */
-export const prepareDefaultManifest = (options: PrepareDefaultManifestOptions): string => {
-    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultManifestOptions>;
+export const prepareDefaultManifestJSON = (options: PrepareDefaultManifestJSONOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultManifestJSONOptions>;
     const brand = opts.brand; // Extracts brand from options passed in.
 
     if (!['spa', 'mpa'].includes(opts.appType)) {
