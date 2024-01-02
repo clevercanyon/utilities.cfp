@@ -3,7 +3,8 @@
  */
 
 import { $cfp } from '#index.ts';
-import { $http, $preact, type $type } from '@clevercanyon/utilities';
+import { $class, $env, $http, $preact, type $type } from '@clevercanyon/utilities';
+const Logger = $class.getLogger(); // Logger class.
 
 /**
  * Defines types.
@@ -17,9 +18,16 @@ export type HandleSPACatchAllRouteOptions = Omit<$preact.iso.PrerenderSPAOptions
  * @param options Options; {@see HydrativelyRenderSPAOptions}.
  *
  * @requiredEnv web -- This utility must only be used client-side.
+ *
+ * @note An `auditLogger` is prepared before hydratively rendering,
+ *       such that it’s capable of recording uncaught errors during hydration.
  */
 export const hydrativelyRenderSPA = async (options: HydrativelyRenderSPAOptions): Promise<void> => {
-    return $preact.iso.hydrativelyRenderSPA(options);
+    const auditLogger =
+        options.props?.auditLogger || // Preserves existing, if passed in props.
+        new Logger({ endpointToken: $env.get('APP_AUDIT_LOGGER_BEARER_TOKEN', { type: 'string', require: true }) });
+
+    return $preact.iso.hydrativelyRenderSPA({ ...options, props: { ...options.props, auditLogger } });
 };
 
 /**
