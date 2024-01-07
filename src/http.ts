@@ -172,8 +172,8 @@ export const prepareDefaultHeaders = (options: PrepareDefaultHeaderOptions): str
     for (const [name, value] of Object.entries(opts.isC10n ? $http.c10nSecurityHeaders() : $http.defaultSecurityHeaders())) {
         _securityHeaders.push(name + ': ' + value);
     }
-    const securityHeaders = _securityHeaders.join(separator);
-    const allowAnyOriginHeader = ['access-control-allow-origin: *'].join(separator);
+    const securityHeaders = _securityHeaders.join(separator),
+        allowAnyOriginHeader = ['access-control-allow-origin: *'].join(separator);
 
     const seoRelatedCacheControlHeaders = [
         'cache-control: public, must-revalidate, max-age=86400, s-maxage=86400, stale-while-revalidate=86400, stale-if-error=86400',
@@ -302,8 +302,8 @@ export const prepareDefaultRoutesJSON = (options: PrepareDefaultRoutesJSONOption
  * @see https://o5p.me/xxZtV7
  */
 export const prepareDefaultManifestJSON = (options: PrepareDefaultManifestJSONOptions): string => {
-    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultManifestJSONOptions>;
-    const brand = opts.brand; // Extracts brand from options passed in.
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultManifestJSONOptions>,
+        brand = opts.brand; // Extracts brand from options passed in.
 
     if (!['spa', 'mpa'].includes(opts.appType)) {
         return ''; // Not applicable.
@@ -455,8 +455,8 @@ export const prepareDefaultAdsTxt = (options: PrepareDefaultAdsTxtOptions): stri
 export const prepareDefaultHumansTxt = (options: PrepareDefaultHumansTxtOptions): string => {
     const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultHumansTxtOptions>;
 
-    const jaswrks = $person.get('@jaswrks');
-    const brucewrks = $person.get('@brucewrks');
+    const jaswrks = $person.get('@jaswrks'),
+        brucewrks = $person.get('@brucewrks');
 
     if (!['spa', 'mpa'].includes(opts.appType)) {
         return ''; // Not applicable.
@@ -514,8 +514,8 @@ export const prepareDefaultHumansTxt = (options: PrepareDefaultHumansTxtOptions)
  * @see https://o5p.me/jYWihV
  */
 export const prepareDefaultRobotsTxt = (options: PrepareDefaultRobotsTxtOptions): string => {
-    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultRobotsTxtOptions>;
-    const baseURLResolvedNTS = $str.rTrim(new URL('./', opts.baseURL).toString(), '/');
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultRobotsTxtOptions>,
+        baseURLResolvedNTS = $str.rTrim(new URL('./', opts.baseURL).toString(), '/');
 
     if (!['spa', 'mpa'].includes(opts.appType)) {
         return ''; // Not applicable.

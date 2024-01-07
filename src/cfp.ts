@@ -5,33 +5,25 @@
 import '#@initialize.ts';
 
 import { $app, $class, $env, $error, $http, $mime, $obj, $url, type $type } from '@clevercanyon/utilities';
+import { type $cfw } from '@clevercanyon/utilities.cfw';
 
 /**
  * Defines types.
  */
-export type Environment = Readonly<{
-    D1?: $type.cf.D1Database;
-    R2?: $type.cf.R2Bucket;
-    KV?: $type.cf.KVNamespace;
-    DO?: $type.cf.DurableObjectNamespace;
-    [x: string]: unknown;
-}>;
-export type Context = Parameters<$type.cf.PagesFunction>[0];
+export type Context = Readonly<Parameters<$type.cf.PagesFunction>[0]>;
+export type Environment = $cfw.StdEnvironment;
 export type Route = (feData: FetchEventData) => Promise<$type.cf.Response>;
 
-export type FetchEventData = Readonly<{
-    request: $type.cf.Request;
-    env: Environment;
-    ctx: Context;
-    route: Route;
-    url: $type.cf.URL;
-    auditLogger: $type.LoggerInterface;
-    consentLogger: $type.LoggerInterface;
-}>;
 export type InitialFetchEventData = Readonly<{
     ctx: Context;
     route: Route;
 }>;
+export type FetchEventData = $cfw.StdFetchEventData &
+    Readonly<{
+        ctx: Context;
+        env: Environment;
+        route: Route;
+    }>;
 
 /**
  * Tracks initialization.
@@ -70,7 +62,7 @@ const maybeInitialize = async (ifeData: InitialFetchEventData): Promise<void> =>
         (baseConsentLogger = new Logger({ endpointToken: $env.get('APP_CONSENT_LOGGER_BEARER_TOKEN', { type: 'string', require: true }) }));
 
     void baseAuditLogger
-        .withContext({}, { request, cfwContext: ctx }) //
+        .withContext({ colo: request.cf?.colo || '' }, { cfwContext: ctx, request }) //
         .info('Worker initialized.', { ifeData });
 };
 
@@ -90,24 +82,24 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
 
     // Initializes audit logger early so it’s available for any errors below.
     // However, `request` is potentially rewritten, so reinitialize if it changes.
-    let auditLogger = baseAuditLogger.withContext({}, { request, cfwContext: ctx });
+    let auditLogger = baseAuditLogger.withContext({}, { cfwContext: ctx, request });
 
     try {
         let originalRequest = request; // Potentially rewritten.
         request = $http.prepareRequest(request, {}) as $type.cf.Request;
 
         if (request !== originalRequest /* Reinitializes using rewritten request. */) {
-            auditLogger = baseAuditLogger.withContext({}, { request, cfwContext: ctx });
+            auditLogger = baseAuditLogger.withContext({}, { cfwContext: ctx, request });
         }
         const url = $url.parse(request.url) as $type.cf.URL,
-            consentLogger = baseConsentLogger.withContext({}, { request, cfwContext: ctx }),
-            feData = $obj.freeze({ request, env, ctx, route, url, auditLogger, consentLogger });
+            consentLogger = baseConsentLogger.withContext({}, { cfwContext: ctx, request }),
+            feData = $obj.freeze({ ctx, env, url, request, route, auditLogger, consentLogger }) as FetchEventData;
 
         return handleFetchCache(route, feData);
         //
     } catch (thrown) {
         if (thrown instanceof Response) {
-            void auditLogger.info(String(thrown.status) + ': Response thrown.', { thrownResponse: thrown });
+            void auditLogger.info(String(thrown.status) + ': Response thrown.', { thrown });
             return thrown as unknown as $type.cf.Response;
         }
         const message = $error.safeMessageFrom(thrown, { default: 'KkaDSshK' });
@@ -131,7 +123,7 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
  */
 export const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$type.cf.Response> => {
     let key, cachedResponse; // Initialize.
-    const { request, url, ctx } = feData;
+    const { ctx, url, request } = feData;
 
     // Populates cache key.
 
