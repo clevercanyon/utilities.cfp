@@ -4,7 +4,7 @@
 
 import '#@initialize.ts';
 
-import { $app, $class, $env, $error, $http, $mime, $obj, $url, type $type } from '@clevercanyon/utilities';
+import { $app, $class, $env, $error, $http, $is, $mime, $obj, $url, type $type } from '@clevercanyon/utilities';
 import { type $cfw } from '@clevercanyon/utilities.cfw';
 
 /**
@@ -98,7 +98,7 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
         return handleFetchCache(route, feData);
         //
     } catch (thrown) {
-        if (thrown instanceof Response) {
+        if ($is.response(thrown)) {
             void auditLogger.info(String(thrown.status) + ': Response thrown.', { thrown });
             return thrown as unknown as $type.cf.Response;
         }
@@ -113,6 +113,9 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
     }
 };
 
+// ---
+// Misc utilities.
+
 /**
  * Handles fetch caching.
  *
@@ -121,7 +124,7 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
  *
  * @returns        Response promise.
  */
-export const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$type.cf.Response> => {
+const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$type.cf.Response> => {
     let key, cachedResponse; // Initialize.
     const { ctx, url, request } = feData;
 
