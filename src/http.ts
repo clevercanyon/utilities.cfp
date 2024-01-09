@@ -284,7 +284,6 @@ export const prepareDefaultRoutesJSON = (options: PrepareDefaultRoutesJSONOption
 
                 // Also exclude all known redirects.
                 // We want `_redirects` to control these.
-                '/legal/dsar',
                 '/r/*',
             ],
         },
