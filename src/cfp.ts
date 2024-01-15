@@ -10,8 +10,8 @@ import { type $cfw } from '@clevercanyon/utilities.cfw';
 /**
  * Defines types.
  */
-export type Context = Readonly<Parameters<$type.cf.PagesFunction>[0]>;
-export type Environment = $cfw.StdEnvironment;
+export type Context = Readonly<Parameters<$type.cf.PagesFunction<$cfw.StdEnvironment>>[0]>;
+export type Environment = $cfw.StdEnvironment & Context['env'];
 export type Route = (feData: FetchEventData) => Promise<$type.cf.Response>;
 
 export type InitialFetchEventData = Readonly<{
@@ -89,8 +89,22 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
         }
         const url = $url.parse(request.url) as $type.cf.URL,
             consentLogger = baseConsentLogger.withContext({}, { cfwContext: ctx, request }),
-            feData = $obj.freeze({ ctx, env, url, request, route, auditLogger, consentLogger }) as FetchEventData;
+            feData = $obj.freeze({
+                ctx,
+                env,
 
+                url,
+                request,
+                route,
+
+                auditLogger,
+                consentLogger,
+
+                URL: URL as unknown as typeof $type.cf.URL,
+                fetch: fetch as unknown as typeof $type.cf.fetch,
+                Request: Request as unknown as typeof $type.cf.Request,
+                Response: Response as unknown as typeof $type.cf.Response,
+            });
         return handleFetchCache(route, feData);
         //
     } catch (thrown) {
@@ -121,7 +135,7 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
  */
 const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$type.cf.Response> => {
     let key, cachedResponse; // Initialize.
-    const { ctx, url, request } = feData;
+    const { ctx, url, request, Request, Response } = feData;
 
     // Populates cache key.
 
@@ -131,7 +145,7 @@ const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$
     }
     const keyURL = $url.removeCSOQueryVars(url); // e.g., `ut[mx]_`, `_ck`, etc.
     keyURL.searchParams.set('_ck', key), keyURL.searchParams.sort(); // Optimizes cache.
-    const keyRequest = new Request(keyURL.toString(), request as unknown as Request) as unknown as $type.cf.Request;
+    const keyRequest = new Request(keyURL.toString(), request);
 
     // Checks if request is cacheable.
 
@@ -142,7 +156,7 @@ const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$
 
     if ((cachedResponse = await cache.match(keyRequest, { ignoreMethod: true }))) {
         if (!$http.requestNeedsContentBody(keyRequest, cachedResponse.status)) {
-            cachedResponse = new Response(null, cachedResponse) as unknown as $type.cf.Response;
+            cachedResponse = new Response(null, cachedResponse);
         }
         return cachedResponse;
     }
