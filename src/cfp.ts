@@ -100,10 +100,10 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
                 auditLogger,
                 consentLogger,
 
-                URL: URL as unknown as typeof $type.cf.URL,
-                fetch: fetch as unknown as typeof $type.cf.fetch,
-                Request: Request as unknown as typeof $type.cf.Request,
-                Response: Response as unknown as typeof $type.cf.Response,
+                URL: globalThis.URL as unknown as typeof $type.cf.URL,
+                fetch: globalThis.fetch as unknown as typeof $type.cf.fetch,
+                Request: globalThis.Request as unknown as typeof $type.cf.Request,
+                Response: globalThis.Response as unknown as typeof $type.cf.Response,
             });
         return handleFetchCache(route, feData);
         //

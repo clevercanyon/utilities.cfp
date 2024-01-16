@@ -48,7 +48,7 @@ export const handleSPACatchAllRoute = async (feData: $cfp.FetchEventData, option
     if (['HEAD', 'GET'].includes(request.method)) {
         const { httpState, docType, html } = await $preact.iso.prerenderSPA({ ...options, request });
 
-        config.status = httpState.status || 200;
+        config.status = httpState.status || 200; // OK response status.
         config.headers = { 'content-type': 'text/html; charset=utf-8' };
         config.body = docType + html; // HTML markup; including doctype.
     }
