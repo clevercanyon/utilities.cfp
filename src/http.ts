@@ -444,8 +444,6 @@ export const prepareDefaultAdsTxt = (options: PrepareDefaultAdsTxtOptions): stri
  *
  * @returns         Default `/humans.txt` file for a Cloudflare Pages site.
  *
- * @review Can we make this more dynamic wrt to which humans are listed?
- *
  * @see https://o5p.me/3Esxyt
  */
 export const prepareDefaultHumansTxt = (options: PrepareDefaultHumansTxtOptions): string => {

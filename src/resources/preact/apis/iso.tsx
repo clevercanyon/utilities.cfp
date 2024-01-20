@@ -21,7 +21,7 @@ export type HandleSPACatchAllRouteOptions = Omit<$preact.iso.PrerenderSPAOptions
  * @requiredEnv web -- This utility must only be used client-side.
  *
  * @note An `auditLogger` is prepared before hydratively rendering,
- *       such that it’s capable of recording uncaught errors during hydration.
+ *       such that it’s capable of recording uncaught hydration errors.
  */
 export const hydrativelyRenderSPA = async (options: HydrativelyRenderSPAOptions): Promise<void> => {
     const auditLogger =
@@ -43,7 +43,7 @@ export const hydrativelyRenderSPA = async (options: HydrativelyRenderSPAOptions)
  */
 export const handleSPACatchAllRoute = async (feData: $cfp.FetchEventData, options: HandleSPACatchAllRouteOptions): Promise<$type.cf.Response> => {
     const { request } = feData;
-    let config = $http.responseConfig();
+    let config = await $http.responseConfig();
 
     if (['HEAD', 'GET'].includes(request.method)) {
         const { httpState, docType, html } = await $preact.iso.prerenderSPA({ ...options, request });
@@ -52,5 +52,5 @@ export const handleSPACatchAllRoute = async (feData: $cfp.FetchEventData, option
         config.headers = { 'content-type': 'text/html; charset=utf-8' };
         config.body = docType + html; // HTML markup; including doctype.
     }
-    return $http.prepareResponse(request, config) as $type.cf.Response;
+    return $http.prepareResponse(request, config) as Promise<$type.cf.Response>;
 };
