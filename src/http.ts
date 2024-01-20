@@ -154,6 +154,9 @@ export const prepareDefaultWellKnownSecurityTxt = (options: PrepareDefaultWellKn
 /**
  * Prepares default `/_headers` file for a Cloudflare Pages site.
  *
+ * These headers apply only to static paths. Please {@see prepareDefaultRoutesJSON()} and {@see https://o5p.me/juElYi}
+ * regarding Cloudflare’s handling of the `_headers` file as it pertains to static paths.
+ *
  * @param   options Options. Some required; {@see PrepareDefaultHeaderOptions}.
  *
  * @returns         Default `/_headers` file for a Cloudflare Pages site.
@@ -166,14 +169,18 @@ export const prepareDefaultHeaders = (options: PrepareDefaultHeaderOptions): str
     if (!['spa', 'mpa'].includes(opts.appType)) {
         return ''; // Not applicable.
     }
-    const separator = '\n    '; // Line break + indentation.
-    let _securityHeaders = []; // Initializes security headers.
+    const separator = '\n    ', // Line break + indentation.
+        httpSecurityHeaders = opts.isC10n //
+            ? $http.c10nSecurityHeaders({ enableCORs: true })
+            : $http.defaultSecurityHeaders({ enableCORs: true });
+    let securityHeadersArr = []; // Initializes security headers.
 
-    for (const [name, value] of Object.entries(opts.isC10n ? $http.c10nSecurityHeaders() : $http.defaultSecurityHeaders())) {
-        _securityHeaders.push(name + ': ' + value);
+    for (const [name, value] of Object.entries(httpSecurityHeaders)) {
+        securityHeadersArr.push(name + ': ' + value);
     }
-    const securityHeaders = _securityHeaders.join(separator),
-        allowAnyOriginHeader = ['access-control-allow-origin: *'].join(separator);
+    const securityHeaders = securityHeadersArr.join(separator),
+        allowAnyOriginHeader = 'access-control-allow-origin: *',
+        allowAnyTimingOriginHeader = 'timing-allow-origin: *';
 
     const seoRelatedCacheControlHeaders = [
         'cache-control: public, must-revalidate, max-age=86400, s-maxage=86400, stale-while-revalidate=86400, stale-if-error=86400',
@@ -188,42 +195,32 @@ export const prepareDefaultHeaders = (options: PrepareDefaultHeaderOptions): str
     return $str.dedent(`
         /*
             ${securityHeaders}
-            vary: origin
-
-        /.well-known/*
             ${allowAnyOriginHeader}
-            ${seoRelatedCacheControlHeaders}
-
-        /assets/*
-            ${allowAnyOriginHeader}
+            ${allowAnyTimingOriginHeader}
             ${staticCacheControlHeaders}
 
+        /.well-known/*
+            ${seoRelatedCacheControlHeaders}
+
         /sitemaps/*.xml
-            ${allowAnyOriginHeader}
             ${seoRelatedCacheControlHeaders}
 
         /sitemap.xml
-            ${allowAnyOriginHeader}
             ${seoRelatedCacheControlHeaders}
 
         /manifest.json
-            ${allowAnyOriginHeader}
             ${seoRelatedCacheControlHeaders}
 
         /ads.txt
-            ${allowAnyOriginHeader}
             ${seoRelatedCacheControlHeaders}
 
         /humans.txt
-            ${allowAnyOriginHeader}
             ${seoRelatedCacheControlHeaders}
 
         /robots.txt
-            ${allowAnyOriginHeader}
             ${seoRelatedCacheControlHeaders}
 
         /favicon.ico
-            ${allowAnyOriginHeader}
             ${seoRelatedCacheControlHeaders}
 
         https://*.pages.dev/*

@@ -129,9 +129,12 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
  */
 const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$type.cf.Response> => {
     let key, cachedResponse; // Initialize.
-    const { ctx, url, request, caches, Request, Response } = feData;
+    const { ctx, url, request, caches, Request, auditLogger } = feData;
 
     // Populates cache key.
+
+    // @review There is no reason to shard the cache if `enableCORs` is not `true`,
+    // because in such a case, we don’t send back any headers that would actually vary.
 
     key = 'v=' + $app.buildTime().unix().toString();
     if (request.headers.has('origin') /* Possibly empty. */) {
@@ -149,10 +152,8 @@ const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$
     // Reads response for this request from HTTP cache.
 
     if ((cachedResponse = await caches.default.match(keyRequest, { ignoreMethod: true }))) {
-        if (!$http.requestNeedsContentBody(keyRequest, cachedResponse.status)) {
-            cachedResponse = new Response(null, cachedResponse);
-        }
-        return cachedResponse;
+        void auditLogger.log('Serving response from cache.', { cachedResponse });
+        return $http.prepareCachedResponse(keyRequest, cachedResponse) as unknown as $type.cf.Response;
     }
     // Routes request and writes response to HTTP cache.
 
@@ -160,12 +161,17 @@ const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$
 
     if ('GET' === keyRequest.method && 206 !== response.status && '*' !== response.headers.get('vary') && !response.webSocket) {
         if ($env.isCFWViaMiniflare() && 'no-store' === response.headers.get('cdn-cache-control')) {
-            // Miniflare doesn’t currently support `cdn-cache-control`, so we implement basic support for it here.
+            // Miniflare doesn’t support `cdn-cache-control`, so we implement basic support here.
             response.headers.set('cf-cache-status', 'c10n.miniflare.cdn-cache-control.BYPASS');
         } else {
-            // Cloudflare will not actually cache if response headers say not to cache.
-            // For further details regarding `cache.put()`; {@see https://o5p.me/gMv7W2}.
-            ctx.waitUntil(caches.default.put(keyRequest, response.clone()));
+            ctx.waitUntil(
+                (async (/* Caching occurs in background via `waitUntil()` */): Promise<void> => {
+                    // Cloudflare will not actually cache if response headers say not to cache; {@see https://o5p.me/gMv7W2}.
+                    const responseForCache = (await $http.prepareResponseForCache(keyRequest, response)) as unknown as $type.cf.Response;
+                    void auditLogger.log('Caching response server-side.', { responseForCache });
+                    return caches.default.put(keyRequest, responseForCache); // We `waitUntil()` this completes.
+                })(),
+            );
         }
     }
     return response; // Potentially cached async.
