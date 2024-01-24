@@ -60,4 +60,4 @@ export async function handleSPACatchAllRoute(feData: $cfp.FetchEventData, route:
     }
     return $http.prepareResponse(request, config) as Promise<$type.cf.Response>;
 }
-handleSPACatchAllRoute.config = await $http.routeConfig({ enableCORs: false, varyOn: [] });
+handleSPACatchAllRoute.config = $http.routeConfig({ enableCORs: false, varyOn: [] });
