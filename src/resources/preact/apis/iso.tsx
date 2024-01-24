@@ -3,7 +3,7 @@
  */
 
 import { $cfp } from '#index.ts';
-import { $class, $env, $http, $preact, type $type } from '@clevercanyon/utilities';
+import { $class, $env, $http, $mime, $preact, type $type } from '@clevercanyon/utilities';
 
 const Logger = $class.getLogger(); // Logger class.
 
@@ -47,10 +47,15 @@ export async function handleSPACatchAllRoute(feData: $cfp.FetchEventData, route:
         config = await $http.responseConfig({ ...handleSPACatchAllRoute.config, ...route.config });
 
     if (['HEAD', 'GET'].includes(request.method)) {
-        const { httpState, docType, html } = await $preact.iso.prerenderSPA({ ...options, request });
+        const {
+            httpState,
+            docType,
+            html,
+        } = // Prerenders single-page application.
+            await $preact.iso.prerenderSPA({ ...options, request });
 
         config.status = httpState.status || 200; // OK response status.
-        config.headers = { 'content-type': 'text/html; charset=utf-8' };
+        config.headers = { 'content-type': $mime.contentType('.html') };
         config.body = docType + html; // HTML markup; including doctype.
     }
     return $http.prepareResponse(request, config) as Promise<$type.cf.Response>;
