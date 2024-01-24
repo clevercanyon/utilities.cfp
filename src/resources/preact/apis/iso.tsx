@@ -23,27 +23,28 @@ export type HandleSPACatchAllRouteOptions = Omit<$preact.iso.PrerenderSPAOptions
  * @note An `auditLogger` is prepared before hydratively rendering,
  *       such that it’s capable of recording uncaught hydration errors.
  */
-export const hydrativelyRenderSPA = async (options: HydrativelyRenderSPAOptions): Promise<void> => {
+export async function hydrativelyRenderSPA(options: HydrativelyRenderSPAOptions): Promise<void> {
     const auditLogger =
         options.props?.auditLogger || // Preserves existing, if passed in props.
         new Logger({ endpointToken: $env.get('APP_AUDIT_LOGGER_BEARER_TOKEN', { type: 'string', require: true }) });
 
     return $preact.iso.hydrativelyRenderSPA({ ...options, props: { ...options.props, auditLogger } });
-};
+}
 
 /**
  * Handles an SPA's catch-all function route.
  *
  * @param   feData  Fetch event data.
- * @param   options Options {@see HandleSPACatchAllRouteOptions}.
+ * @param   route   Underlying route; {@see $cfp.Route}.
+ * @param   options Options; {@see HandleSPACatchAllRouteOptions}.
  *
  * @returns         Response promise.
  *
  * @requiredEnv ssr -- This utility must only be used server-side.
  */
-export const handleSPACatchAllRoute = async (feData: $cfp.FetchEventData, options: HandleSPACatchAllRouteOptions): Promise<$type.cf.Response> => {
-    const { request } = feData;
-    let config = await $http.responseConfig();
+export async function handleSPACatchAllRoute(feData: $cfp.FetchEventData, route: $cfp.Route, options: HandleSPACatchAllRouteOptions): Promise<$type.cf.Response> {
+    const { request } = feData,
+        config = await $http.responseConfig({ ...handleSPACatchAllRoute.config, ...route.config });
 
     if (['HEAD', 'GET'].includes(request.method)) {
         const { httpState, docType, html } = await $preact.iso.prerenderSPA({ ...options, request });
@@ -53,4 +54,5 @@ export const handleSPACatchAllRoute = async (feData: $cfp.FetchEventData, option
         config.body = docType + html; // HTML markup; including doctype.
     }
     return $http.prepareResponse(request, config) as Promise<$type.cf.Response>;
-};
+}
+handleSPACatchAllRoute.config = await $http.routeConfig({ enableCORs: false, varyOn: [] });

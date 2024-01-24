@@ -12,8 +12,9 @@ import { type $cfw } from '@clevercanyon/utilities.cfw';
  */
 export type Context = Readonly<Parameters<$type.cf.PagesFunction<$cfw.StdEnvironment>>[0]>;
 export type Environment = $cfw.StdEnvironment & Context['env'];
-export type Route = (feData: FetchEventData) => Promise<$type.cf.Response>;
-
+export type Route = ((feData: FetchEventData) => Promise<$type.cf.Response>) & {
+    config?: Required<$http.RouteConfig>;
+};
 export type InitialFetchEventData = Readonly<{
     ctx: Context;
     route: Route;
@@ -133,13 +134,16 @@ const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$
 
     // Populates cache key.
 
-    // @review There is no reason to shard the cache if `enableCORs` is not `true`,
-    // because in such a case, we don’t send back any headers that would actually vary.
+    const varyOn = new Set(route.config?.varyOn || []);
+    for (const v of varyOn) if (!request.headers.has(v)) varyOn.delete(v);
 
-    key = 'v=' + $app.buildTime().unix().toString();
-    if (request.headers.has('origin') /* Possibly empty. */) {
-        key += '&origin=' + (request.headers.get('origin') || '');
-    }
+    if ((!route.config || route.config.enableCORs) && request.headers.has('origin')) {
+        varyOn.add('origin'); // CORs requires us to vary on origin.
+    } else varyOn.delete('origin'); // Must not vary on origin.
+
+    key = 'v=' + $app.buildTime().toStamp().toString();
+    for (const v of varyOn) key += '&' + v + '=' + (request.headers.get(v) || '');
+
     const keyURL = $url.removeCSOQueryVars(url); // e.g., `ut[mx]_`, `_ck`, etc.
     keyURL.searchParams.set('_ck', key), keyURL.searchParams.sort(); // Optimizes cache.
     const keyRequest = new Request(keyURL.toString(), request);
