@@ -173,30 +173,28 @@ export const prepareDefaultHeaders = (options: PrepareDefaultHeaderOptions): str
         httpSecurityHeaders = opts.isC10n //
             ? $http.c10nSecurityHeaders({ enableCORs: true })
             : $http.defaultSecurityHeaders({ enableCORs: true });
-    let securityHeadersArr = []; // Initializes security headers.
 
+    let securityHeadersArr = []; // Initializes security headers.
     for (const [name, value] of Object.entries(httpSecurityHeaders)) {
         securityHeadersArr.push(name + ': ' + value);
     }
     const securityHeaders = securityHeadersArr.join(separator),
-        allowAnyOriginHeader = 'access-control-allow-origin: *',
-        allowAnyTimingOriginHeader = 'timing-allow-origin: *';
-
-    const seoRelatedCacheControlHeaders = [
-        'cache-control: public, must-revalidate, max-age=86400, s-maxage=86400, stale-while-revalidate=86400, stale-if-error=86400',
-        'cdn-cache-control: public, must-revalidate, max-age=86400, stale-while-revalidate=86400, stale-if-error=86400',
-    ].join(separator);
-
-    const staticCacheControlHeaders = [
-        'cache-control: public, must-revalidate, max-age=31536000, s-maxage=31536000, stale-while-revalidate=604800, stale-if-error=604800',
-        'cdn-cache-control: public, must-revalidate, max-age=31536000, stale-while-revalidate=604800, stale-if-error=604800',
-    ].join(separator);
+        //
+        staticCacheControlHeaders = [
+            'cache-control: public, must-revalidate, max-age=31536000, s-maxage=31536000, stale-while-revalidate=604800, stale-if-error=604800',
+            'cdn-cache-control: public, must-revalidate, max-age=31536000, stale-while-revalidate=604800, stale-if-error=604800',
+        ].join(separator),
+        //
+        seoRelatedCacheControlHeaders = [
+            '! cache-control',
+            '! cdn-cache-control',
+            'cache-control: public, must-revalidate, max-age=86400, s-maxage=86400, stale-while-revalidate=86400, stale-if-error=86400',
+            'cdn-cache-control: public, must-revalidate, max-age=86400, stale-while-revalidate=86400, stale-if-error=86400',
+        ].join(separator);
 
     return $str.dedent(`
         /*
             ${securityHeaders}
-            ${allowAnyOriginHeader}
-            ${allowAnyTimingOriginHeader}
             ${staticCacheControlHeaders}
 
         /.well-known/*
