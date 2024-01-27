@@ -4,7 +4,7 @@
 
 import '#@initialize.ts';
 
-import { $app, $class, $env, $error, $fsize, $http, $is, $mime, $obj, $url, type $type } from '@clevercanyon/utilities';
+import { $app, $class, $env, $error, $fsize, $http, $is, $obj, $url, type $type } from '@clevercanyon/utilities';
 import { type $cfw } from '@clevercanyon/utilities.cfw';
 
 /**
@@ -111,7 +111,6 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
 
         return $http.prepareResponse(request, {
             status: 500, // Failed status in this scenario.
-            headers: { 'content-type': $mime.contentType('.txt') },
             body: message, // Safe message from whatever was thrown.
         }) as Promise<$type.cf.Response>;
     }
@@ -130,7 +129,7 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
  */
 const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$type.cf.Response> => {
     let key, cachedResponse; // Initialize.
-    const { ctx, url, request, caches, Request, auditLogger } = feData;
+    const { ctx, url, request, caches, Request } = feData;
 
     // Populates cache key.
 
@@ -156,7 +155,6 @@ const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$
     // Reads response for this request from HTTP cache.
 
     if ((cachedResponse = await caches.default.match(keyRequest, { ignoreMethod: true }))) {
-        void auditLogger.log('Serving response from cache.', { cachedResponse });
         return $http.prepareCachedResponse(keyRequest, cachedResponse) as Promise<$type.cf.Response>;
     }
     // Routes request and writes response to HTTP cache.
@@ -177,10 +175,8 @@ const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$
         ctx.waitUntil(
             (async (/* Caching occurs in background via `waitUntil()`. */): Promise<void> => {
                 // Cloudflare will not actually cache if headers say not to; {@see https://o5p.me/gMv7W2}.
-                const responseForCache = (await $http.prepareResponseForCache(keyRequest, response)) as $type.cf.Response,
-                    cachePutResponse = await caches.default.put(keyRequest, responseForCache);
-                void auditLogger.log('Caching response server-side.', { responseForCache, cachePutResponse });
-                console.log({ responseForCache, cachePutResponse });
+                const responseForCache = (await $http.prepareResponseForCache(keyRequest, response)) as $type.cf.Response;
+                await caches.default.put(keyRequest, responseForCache);
             })(),
         );
         response.headers.set('x-cache-status', 'miss'); // i.e., Cache miss.
