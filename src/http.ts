@@ -24,9 +24,8 @@ export type PrepareDefaultRoutesJSONOptions = PreparationOptions;
 export type PrepareDefaultManifestJSONOptions = PreparationOptions;
 export type PrepareDefaultAdsTxtOptions = PreparationOptions;
 export type PrepareDefaultHumansTxtOptions = PreparationOptions;
-export type PrepareDefaultRobotsTxtOptions = PreparationOptions & {
-    allow: boolean; // Whether to allow robots.
-};
+export type PrepareDefaultRobotsTxtOptions = PreparationOptions & { allow: boolean };
+export type PrepareDefaultDefaultSitemapsForRobotsTxtOptions = PreparationOptions;
 
 /**
  * Prepares default `/.well-known/gpc.json` file for a Cloudflare Pages site.
@@ -397,19 +396,49 @@ export const prepareDefaultManifestJSON = (options: PrepareDefaultManifestJSONOp
                 },
             ],
             screenshots: [
-                // Wide.
+                // Wide on desktop.
                 {
                     type: 'image/png',
                     form_factor: 'wide',
                     src: brand.ogImage.png,
                     sizes: String(brand.ogImage.width) + 'x' + String(brand.ogImage.height),
                 },
-                // Narrow.
+                {
+                    type: 'image/png',
+                    form_factor: 'wide',
+                    src: brand.screenshots.desktop['1'].png,
+                    sizes: String(brand.screenshots.desktop.width) + 'x' + String(brand.screenshots.desktop.height),
+                },
+                {
+                    type: 'image/png',
+                    form_factor: 'wide',
+                    src: brand.screenshots.desktop['2'].png,
+                    sizes: String(brand.screenshots.desktop.width) + 'x' + String(brand.screenshots.desktop.height),
+                },
+                {
+                    type: 'image/png',
+                    form_factor: 'wide',
+                    src: brand.screenshots.desktop['3'].png,
+                    sizes: String(brand.screenshots.desktop.width) + 'x' + String(brand.screenshots.desktop.height),
+                },
+                // Narrow on mobile.
                 {
                     type: 'image/png',
                     form_factor: 'narrow',
-                    src: brand.ogImage.png,
-                    sizes: String(brand.ogImage.width) + 'x' + String(brand.ogImage.height),
+                    src: brand.screenshots.mobile['1'].png,
+                    sizes: String(brand.screenshots.mobile.width) + 'x' + String(brand.screenshots.mobile.height),
+                },
+                {
+                    type: 'image/png',
+                    form_factor: 'narrow',
+                    src: brand.screenshots.mobile['2'].png,
+                    sizes: String(brand.screenshots.mobile.width) + 'x' + String(brand.screenshots.mobile.height),
+                },
+                {
+                    type: 'image/png',
+                    form_factor: 'narrow',
+                    src: brand.screenshots.mobile['3'].png,
+                    sizes: String(brand.screenshots.mobile.width) + 'x' + String(brand.screenshots.mobile.height),
                 },
             ],
         },
@@ -506,8 +535,7 @@ export const prepareDefaultHumansTxt = (options: PrepareDefaultHumansTxtOptions)
  * @see https://o5p.me/jYWihV
  */
 export const prepareDefaultRobotsTxt = (options: PrepareDefaultRobotsTxtOptions): string => {
-    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultRobotsTxtOptions>,
-        baseURLResolvedNTS = $str.rTrim(new URL('./', opts.baseURL).toString(), '/');
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultRobotsTxtOptions>;
 
     if (!['spa', 'mpa'].includes(opts.appType)) {
         return ''; // Not applicable.
@@ -516,10 +544,7 @@ export const prepareDefaultRobotsTxt = (options: PrepareDefaultRobotsTxtOptions)
         user-agent: TermlyBot
         allow: /
     `);
-    const sitemap = $str.dedent(`
-        sitemap: ${baseURLResolvedNTS}/sitemap.xml
-    `);
-    const common = opts.isC10n ? termly + '\n\n' + sitemap : sitemap;
+    const common = opts.isC10n ? termly : '';
 
     return opts.allow
         ? $str.dedent(`
@@ -534,4 +559,26 @@ export const prepareDefaultRobotsTxt = (options: PrepareDefaultRobotsTxtOptions)
 
             ${common}
         `);
+};
+
+/**
+ * Prepares default sitemaps for a `/robots.txt` file in a Cloudflare Pages site.
+ *
+ * @param   options Options. Some required; {@see PrepareDefaultDefaultSitemapsForRobotsTxtOptions}.
+ *
+ * @returns         Default sitemaps for a `/robots.txt` file in a Cloudflare Pages site.
+ *
+ * @see https://o5p.me/jYWihV
+ */
+export const prepareDefaultSitemapsForRobotsTxt = (options: PrepareDefaultDefaultSitemapsForRobotsTxtOptions): string => {
+    const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultDefaultSitemapsForRobotsTxtOptions>,
+        baseURLResolvedNTS = $str.rTrim(new URL('./', opts.baseURL).toString(), '/');
+
+    if (!['spa', 'mpa'].includes(opts.appType)) {
+        return ''; // Not applicable.
+    }
+    const sitemaps = $str.dedent(`
+        sitemap: ${baseURLResolvedNTS}/sitemap.xml
+    `);
+    return '\n' + sitemaps;
 };
