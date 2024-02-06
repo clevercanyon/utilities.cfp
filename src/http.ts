@@ -580,5 +580,5 @@ export const prepareDefaultSitemapsForRobotsTxt = (options: PrepareDefaultDefaul
     const sitemaps = $str.dedent(`
         sitemap: ${baseURLResolvedNTS}/sitemap.xml
     `);
-    return '\n' + sitemaps;
+    return sitemaps;
 };
