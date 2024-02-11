@@ -130,7 +130,7 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
  */
 const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$type.cf.Response> => {
     let key, cachedResponse; // Initialize.
-    const { ctx, url, request, caches, Request } = feData;
+    const { ctx, url, request, caches, Request, auditLogger } = feData;
 
     // Populates cache key.
 
@@ -156,7 +156,9 @@ const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$
     // Reads response for this request from HTTP cache.
 
     if ((cachedResponse = await caches.default.match(keyRequest, { ignoreMethod: true }))) {
-        return $http.prepareCachedResponse(keyRequest, cachedResponse) as Promise<$type.cf.Response>;
+        const cr = await $http.prepareCachedResponse(keyRequest, cachedResponse);
+        void auditLogger.log('Cached response:', { cachedResponseHeaders: $http.extractHeaders(cr.headers) });
+        return cr as $type.cf.Response;
     }
     // Routes request and writes response to HTTP cache.
 
