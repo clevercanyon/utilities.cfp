@@ -4,7 +4,7 @@
 
 import '#@initialize.ts';
 
-import { $app, $class, $env, $error, $fsize, $http, $is, $obj, $url, type $type } from '@clevercanyon/utilities';
+import { $app, $class, $crypto, $env, $error, $fsize, $http, $is, $obj, $url, type $type } from '@clevercanyon/utilities';
 import { type $cfw } from '@clevercanyon/utilities.cfw';
 
 /**
@@ -101,7 +101,17 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
                 Response: globalThis.Response as unknown as typeof $type.cf.Response,
                 AbortSignal: globalThis.AbortSignal as unknown as typeof $type.cf.AbortSignal,
             });
-        return handleFetchCache(route, feData);
+        let response = handleFetchCache(route, feData);
+
+        if (url.searchParams.has('utx_audit_log')) {
+            const token = url.searchParams.get('utx_audit_log') || '',
+                validToken = $env.get('APP_AUDIT_LOGGER_BEARER_TOKEN', { type: 'string', require: true }).split(' ', 2)[1] || '';
+
+            if (token && validToken && $crypto.safeEqual(token, validToken)) {
+                void auditLogger.log(url.toString(), { response: await response });
+            }
+        }
+        return response;
         //
     } catch (thrown) {
         if ($is.response(thrown)) {
@@ -130,7 +140,7 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
  */
 const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$type.cf.Response> => {
     let key, cachedResponse; // Initialize.
-    const { ctx, url, request, caches, Request, auditLogger } = feData;
+    const { ctx, url, request, caches, Request } = feData;
 
     // Populates cache key.
 
@@ -156,9 +166,7 @@ const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$
     // Reads response for this request from HTTP cache.
 
     if ((cachedResponse = await caches.default.match(keyRequest, { ignoreMethod: true }))) {
-        const cr = await $http.prepareCachedResponse(keyRequest, cachedResponse);
-        void auditLogger.log('Cached response:', { cachedResponseHeaders: $http.extractHeaders(cr.headers) });
-        return cr as $type.cf.Response;
+        return $http.prepareCachedResponse(keyRequest, cachedResponse) as Promise<$type.cf.Response>;
     }
     // Routes request and writes response to HTTP cache.
 
