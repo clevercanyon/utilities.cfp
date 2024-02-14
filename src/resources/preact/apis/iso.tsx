@@ -24,7 +24,7 @@ export type HandleSPACatchAllRouteOptions = Omit<$preact.iso.PrerenderSPAOptions
  *       such that it’s capable of recording uncaught hydration errors.
  */
 export async function hydrativelyRenderSPA(options: HydrativelyRenderSPAOptions): Promise<void> {
-    const auditLogger =
+    const auditLogger = // Audit logger creation.
         options.props?.auditLogger || // Preserves existing, if passed in props.
         new Logger({ endpointToken: $env.get('APP_AUDIT_LOGGER_BEARER_TOKEN', { type: 'string', require: true }) });
 
@@ -34,7 +34,7 @@ export async function hydrativelyRenderSPA(options: HydrativelyRenderSPAOptions)
 /**
  * Handles an SPA's catch-all function route.
  *
- * @param   feData  Fetch event data.
+ * @param   rcData  Request context data.
  * @param   route   Underlying route; {@see $cfp.Route}.
  * @param   options Options; {@see HandleSPACatchAllRouteOptions}.
  *
@@ -42,8 +42,8 @@ export async function hydrativelyRenderSPA(options: HydrativelyRenderSPAOptions)
  *
  * @requiredEnv ssr -- This utility must only be used server-side.
  */
-export async function handleSPACatchAllRoute(feData: $cfp.FetchEventData, route: $cfp.Route, options: HandleSPACatchAllRouteOptions): Promise<$type.cf.Response> {
-    const { request } = feData,
+export async function handleSPACatchAllRoute(rcData: $cfp.RequestContextData, route: $cfp.Route, options: HandleSPACatchAllRouteOptions): Promise<$type.cf.Response> {
+    const { request } = rcData, // Request extraction.
         config = await $http.responseConfig({ ...handleSPACatchAllRoute.config, ...route.config });
 
     if (['HEAD', 'GET'].includes(request.method)) {

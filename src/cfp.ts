@@ -5,23 +5,23 @@
 import '#@initialize.ts';
 
 import { $app, $class, $crypto, $env, $error, $fsize, $http, $is, $obj, $url, type $type } from '@clevercanyon/utilities';
-import { type $cfw } from '@clevercanyon/utilities.cfw';
+import { cfw, type $cfw } from '@clevercanyon/utilities.cfw';
 
 /**
  * Defines types.
  */
-export type Context = Readonly<Parameters<$type.cf.PagesFunction<$cfw.StdEnvironment>>[0]>;
-export type Environment = $cfw.StdEnvironment & Context['env'];
-export type Route = ((feData: FetchEventData) => Promise<$type.cf.Response>) & {
+export type ExecutionContext = Readonly<Parameters<$type.cf.PagesFunction<$cfw.StdEnvironment>>[0]>;
+export type Environment = $cfw.StdEnvironment & ExecutionContext['env'];
+export type Route = ((rcData: RequestContextData) => Promise<$type.cf.Response>) & {
     config?: Required<$http.RouteConfig>;
 };
-export type InitialFetchEventData = Readonly<{
-    ctx: Context;
+export type InitialRequestContextData = Readonly<{
+    ctx: ExecutionContext;
     route: Route;
 }>;
-export type FetchEventData = $cfw.StdFetchEventData &
+export type RequestContextData = $cfw.StdRequestContextData &
     Readonly<{
-        ctx: Context;
+        ctx: ExecutionContext;
         env: Environment;
         route: Route;
     }>;
@@ -34,18 +34,18 @@ let initializedGlobals = false;
 /**
  * Initializes worker globals.
  *
- * @param ifeData Initial fetch event data.
+ * @param ircData Initial request context data.
  */
-const maybeInitializeGlobals = async (ifeData: InitialFetchEventData): Promise<void> => {
+const maybeInitializeGlobals = async (ircData: InitialRequestContextData): Promise<void> => {
     if (initializedGlobals) return;
     initializedGlobals = true;
 
     $env.capture(
         '@global', // Captures primitive environment variables.
         Object.fromEntries(
-            Object.entries(ifeData.ctx.env).filter(([, value]): boolean => {
+            Object.entries(ircData.ctx.env).filter(([, value]): boolean => {
                 // Anything that is not a primitive value; e.g., KV, D1, or other bindings,
-                // must be accessed in a request-specific way using {@see FetchEventData}.
+                // must be accessed in a request-specific way using {@see RequestContextData}.
                 return $is.primitive(value);
             }),
         ),
@@ -55,16 +55,16 @@ const maybeInitializeGlobals = async (ifeData: InitialFetchEventData): Promise<v
 /**
  * Handles fetch events.
  *
- * @param   feData Initial fetch event data.
+ * @param   ircData Initial request context data.
  *
- * @returns        Response promise.
+ * @returns         Response promise.
  */
-export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<$type.cf.Response> => {
-    const { ctx, route } = ifeData,
+export const handleFetchEvent = async (ircData: InitialRequestContextData): Promise<$type.cf.Response> => {
+    const { ctx, route } = ircData,
         { env } = ctx; // From context data.
     let { request } = ctx; // Rewritable.
 
-    await maybeInitializeGlobals(ifeData); // Initializes worker globals.
+    await maybeInitializeGlobals(ircData); // Initializes worker globals.
 
     const Logger = $class.getLogger(), // Initializes base audit and consent loggers.
         baseAuditLogger = new Logger({ endpointToken: $env.get('APP_AUDIT_LOGGER_BEARER_TOKEN', { type: 'string', require: true }) }),
@@ -72,18 +72,18 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
 
     // Initializes audit logger early so it’s available for any errors below.
     // However, `request` is potentially rewritten, so reinitialize if it changes.
-    let auditLogger = baseAuditLogger.withContext({}, { cfwContext: ctx, request });
+    let auditLogger = baseAuditLogger.withContext({}, { cfw: { ctx }, request });
 
     try {
         let originalRequest = request; // Potentially rewritten.
         request = (await $http.prepareRequest(request, {})) as $type.cf.Request;
 
         if (request !== originalRequest /* Reinitializes using rewritten request. */) {
-            auditLogger = baseAuditLogger.withContext({}, { cfwContext: ctx, request });
+            auditLogger = baseAuditLogger.withContext({}, { cfw: { ctx }, request });
         }
         const url = $url.parse(request.url) as $type.cf.URL,
-            consentLogger = baseConsentLogger.withContext({}, { cfwContext: ctx, request }),
-            feData = $obj.freeze({
+            consentLogger = baseConsentLogger.withContext({}, { cfw: { ctx }, request }),
+            rcData = $obj.freeze({
                 ctx,
                 env,
 
@@ -101,7 +101,7 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
                 Response: globalThis.Response as unknown as typeof $type.cf.Response,
                 AbortSignal: globalThis.AbortSignal as unknown as typeof $type.cf.AbortSignal,
             });
-        let response = handleFetchCache(route, feData);
+        let response = handleFetchCache(rcData, route);
 
         if (url.searchParams.has('utx_audit_log')) {
             const token = url.searchParams.get('utx_audit_log') || '',
@@ -133,16 +133,18 @@ export const handleFetchEvent = async (ifeData: InitialFetchEventData): Promise<
 /**
  * Handles fetch caching.
  *
+ * @param   rcData Request context data.
  * @param   route  Route handler.
- * @param   feData Fetch event data.
  *
  * @returns        Response promise.
  */
-const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$type.cf.Response> => {
-    let key, cachedResponse; // Initialize.
-    const { ctx, url, request, caches, Request } = feData;
+const handleFetchCache = async (rcData: RequestContextData, route: Route): Promise<$type.cf.Response> => {
+    const { caches, Request } = cfw,
+        { ctx, url, request } = rcData;
 
     // Populates cache key.
+
+    let key, cachedResponse; // Initialize.
 
     const varyOn = new Set(route.config?.varyOn || []);
     for (const v of varyOn) if (!request.headers.has(v)) varyOn.delete(v);
@@ -161,7 +163,7 @@ const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$
     // Checks if request is cacheable.
 
     if (!['HEAD', 'GET'].includes(keyRequest.method) || !$http.requestHasCacheableMethod(keyRequest)) {
-        return route(feData); // Not cacheable; use async route.
+        return route(rcData); // Not cacheable; use async route.
     }
     // Reads response for this request from HTTP cache.
 
@@ -170,7 +172,7 @@ const handleFetchCache = async (route: Route, feData: FetchEventData): Promise<$
     }
     // Routes request and writes response to HTTP cache.
 
-    const response = await route(feData); // Awaits response so we can cache.
+    const response = await route(rcData); // Awaits response so we can cache.
     if (
         !response.webSocket &&
         206 !== response.status &&
