@@ -10,9 +10,10 @@ import { cfw, type $cfw } from '@clevercanyon/utilities.cfw';
 /**
  * Defines types.
  */
-export type ExecutionContext = Readonly<Parameters<$type.cf.PagesFunction<$cfw.StdEnvironment>>[0]>;
+export type ExecutionContext = Readonly<Parameters<$type.cfw.PagesFunction<$cfw.StdEnvironment>>[0]>;
 export type Environment = $cfw.StdEnvironment & ExecutionContext['env'];
-export type Route = ((rcData: RequestContextData) => Promise<$type.cf.Response>) & {
+
+export type Route = ((rcData: RequestContextData) => Promise<$type.cfw.Response>) & {
     config?: Required<$http.RouteConfig>;
 };
 export type InitialRequestContextData = Readonly<{
@@ -59,7 +60,7 @@ const maybeInitializeGlobals = async (ircData: InitialRequestContextData): Promi
  *
  * @returns         Response promise.
  */
-export const handleFetchEvent = async (ircData: InitialRequestContextData): Promise<$type.cf.Response> => {
+export const handleFetchEvent = async (ircData: InitialRequestContextData): Promise<$type.cfw.Response> => {
     const { ctx, route } = ircData,
         { env } = ctx; // From context data.
     let { request } = ctx; // Rewritable.
@@ -76,12 +77,12 @@ export const handleFetchEvent = async (ircData: InitialRequestContextData): Prom
 
     try {
         let originalRequest = request; // Potentially rewritten.
-        request = (await $http.prepareRequest(request, {})) as $type.cf.Request;
+        request = (await $http.prepareRequest(request, {})) as $type.cfw.Request;
 
         if (request !== originalRequest /* Reinitializes using rewritten request. */) {
             auditLogger = baseAuditLogger.withContext({}, { cfw: { ctx }, request });
         }
-        const url = $url.parse(request.url) as $type.cf.URL,
+        const url = $url.parse(request.url) as $type.cfw.URL,
             consentLogger = baseConsentLogger.withContext({}, { cfw: { ctx }, request }),
             rcData = $obj.freeze({
                 ctx,
@@ -94,12 +95,12 @@ export const handleFetchEvent = async (ircData: InitialRequestContextData): Prom
                 auditLogger,
                 consentLogger,
 
-                URL: globalThis.URL as unknown as typeof $type.cf.URL,
-                fetch: globalThis.fetch as unknown as typeof $type.cf.fetch,
-                caches: globalThis.caches as unknown as typeof $type.cf.caches,
-                Request: globalThis.Request as unknown as typeof $type.cf.Request,
-                Response: globalThis.Response as unknown as typeof $type.cf.Response,
-                AbortSignal: globalThis.AbortSignal as unknown as typeof $type.cf.AbortSignal,
+                URL: globalThis.URL as unknown as typeof $type.cfw.URL,
+                fetch: globalThis.fetch as unknown as typeof $type.cfw.fetch,
+                caches: globalThis.caches as unknown as typeof $type.cfw.caches,
+                Request: globalThis.Request as unknown as typeof $type.cfw.Request,
+                Response: globalThis.Response as unknown as typeof $type.cfw.Response,
+                AbortSignal: globalThis.AbortSignal as unknown as typeof $type.cfw.AbortSignal,
             });
         let response = handleFetchCache(rcData, route);
 
@@ -115,7 +116,7 @@ export const handleFetchEvent = async (ircData: InitialRequestContextData): Prom
         //
     } catch (thrown) {
         if ($is.response(thrown)) {
-            return thrown as $type.cf.Response;
+            return thrown as $type.cfw.Response;
         }
         const message = $error.safeMessageFrom(thrown, { default: 'KkaDSshK' });
         void auditLogger.error('500: ' + message, { thrown });
@@ -123,7 +124,7 @@ export const handleFetchEvent = async (ircData: InitialRequestContextData): Prom
         return $http.prepareResponse(request, {
             status: 500, // Failed status in this scenario.
             body: message, // Safe message from whatever was thrown.
-        }) as Promise<$type.cf.Response>;
+        }) as Promise<$type.cfw.Response>;
     }
 };
 
@@ -138,7 +139,7 @@ export const handleFetchEvent = async (ircData: InitialRequestContextData): Prom
  *
  * @returns        Response promise.
  */
-const handleFetchCache = async (rcData: RequestContextData, route: Route): Promise<$type.cf.Response> => {
+const handleFetchCache = async (rcData: RequestContextData, route: Route): Promise<$type.cfw.Response> => {
     const { caches, Request } = cfw,
         { ctx, url, request } = rcData;
 
@@ -168,7 +169,7 @@ const handleFetchCache = async (rcData: RequestContextData, route: Route): Promi
     // Reads response for this request from HTTP cache.
 
     if ((cachedResponse = await caches.default.match(keyRequest, { ignoreMethod: true }))) {
-        return $http.prepareCachedResponse(keyRequest, cachedResponse) as Promise<$type.cf.Response>;
+        return $http.prepareCachedResponse(keyRequest, cachedResponse) as Promise<$type.cfw.Response>;
     }
     // Routes request and writes response to HTTP cache.
 
@@ -188,7 +189,7 @@ const handleFetchCache = async (rcData: RequestContextData, route: Route): Promi
         ctx.waitUntil(
             (async (/* Caching occurs in background via `waitUntil()`. */): Promise<void> => {
                 // Cloudflare will not actually cache if headers say not to; {@see https://o5p.me/gMv7W2}.
-                const responseForCache = (await $http.prepareResponseForCache(keyRequest, response)) as $type.cf.Response;
+                const responseForCache = (await $http.prepareResponseForCache(keyRequest, response)) as $type.cfw.Response;
                 await caches.default.put(keyRequest, responseForCache);
             })(),
         );

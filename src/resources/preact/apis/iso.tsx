@@ -42,7 +42,7 @@ export async function hydrativelyRenderSPA(options: HydrativelyRenderSPAOptions)
  *
  * @requiredEnv ssr -- This utility must only be used server-side.
  */
-export async function handleSPACatchAllRoute(rcData: $cfp.RequestContextData, route: $cfp.Route, options: HandleSPACatchAllRouteOptions): Promise<$type.cf.Response> {
+export async function handleSPACatchAllRoute(rcData: $cfp.RequestContextData, route: $cfp.Route, options: HandleSPACatchAllRouteOptions): Promise<$type.cfw.Response> {
     const { request } = rcData, // Request extraction.
         config = await $http.responseConfig({ ...handleSPACatchAllRoute.config, ...route.config });
 
@@ -58,6 +58,6 @@ export async function handleSPACatchAllRoute(rcData: $cfp.RequestContextData, ro
         config.headers = { 'content-type': $mime.contentType('.html') };
         config.body = docType + html; // HTML markup; including doctype.
     }
-    return $http.prepareResponse(request, config) as Promise<$type.cf.Response>;
+    return $http.prepareResponse(request, config) as Promise<$type.cfw.Response>;
 }
 handleSPACatchAllRoute.config = $http.routeConfig({ enableCORs: false, varyOn: [] });
