@@ -3,7 +3,7 @@
     "publishConfig": {
         "access": "public"
     },
-    "version": "1.0.210",
+    "version": "1.0.211",
     "license": "GPL-3.0-or-later",
     "name": "@clevercanyon/utilities.cfp",
     "description": "Utilities for JavaScript apps running in a Cloudflare Pages environment.",
@@ -59,15 +59,15 @@
     },
     "dependencies": {},
     "peerDependencies": {
-        "@clevercanyon/utilities": "^1.0.824",
-        "@clevercanyon/utilities.cfw": "^1.0.221",
+        "@clevercanyon/utilities": "^1.0.828",
+        "@clevercanyon/utilities.cfw": "^1.0.225",
         "@clevercanyon/utilities.web": "^1.0.140"
     },
     "peerDependenciesMeta": {},
     "optionalDependencies": {},
     "bundleDependencies": [],
     "devDependencies": {
-        "@clevercanyon/dev-deps": "^1.0.356"
+        "@clevercanyon/dev-deps": "^1.0.357"
     },
     "overrides": {},
     "cpu": ["x64", "arm64"],
