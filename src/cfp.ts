@@ -94,13 +94,6 @@ export const handleFetchEvent = async (ircData: InitialRequestContextData): Prom
 
                 auditLogger,
                 consentLogger,
-
-                URL: globalThis.URL as unknown as typeof $type.cfw.URL,
-                fetch: globalThis.fetch as unknown as typeof $type.cfw.fetch,
-                caches: globalThis.caches as unknown as typeof $type.cfw.caches,
-                Request: globalThis.Request as unknown as typeof $type.cfw.Request,
-                Response: globalThis.Response as unknown as typeof $type.cfw.Response,
-                AbortSignal: globalThis.AbortSignal as unknown as typeof $type.cfw.AbortSignal,
             });
         let response = handleFetchCache(rcData, route);
 
