@@ -63,7 +63,7 @@ const maybeInitializeGlobals = async (ircData: InitialRequestContextData): Promi
 export const handleFetchEvent = async (ircData: InitialRequestContextData): Promise<$type.cfw.Response> => {
     const { ctx, route } = ircData,
         { env } = ctx; // From context data.
-    let { request } = ctx; // Rewritable.
+    let { request } = ctx; // Extracts writable IRC data.
 
     await maybeInitializeGlobals(ircData); // Initializes worker globals.
 
