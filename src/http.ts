@@ -4,7 +4,7 @@
 
 import '#@initialize.ts';
 
-import { $http, $json, $obj, $person, $str, $time, $url, type $type } from '@clevercanyon/utilities';
+import { $http, $json, $obj, $profile, $str, $time, $url, type $type } from '@clevercanyon/utilities';
 
 /**
  * Defines types.
@@ -476,8 +476,8 @@ export const prepareDefaultAdsTxt = (options: PrepareDefaultAdsTxtOptions): stri
 export const prepareDefaultHumansTxt = (options: PrepareDefaultHumansTxtOptions): string => {
     const opts = $obj.defaults({}, options, { isC10n: false }) as Required<PrepareDefaultHumansTxtOptions>;
 
-    const jaswrks = $person.get('@jaswrks'),
-        brucewrks = $person.get('@brucewrks');
+    const jaswrks = $profile.get('@jaswrks'),
+        brucewrks = $profile.get('@brucewrks');
 
     if (!['spa', 'mpa'].includes(opts.appType)) {
         return ''; // Not applicable.
