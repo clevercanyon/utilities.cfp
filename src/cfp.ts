@@ -4,14 +4,14 @@
 
 import '#@initialize.ts';
 
-import { $app, $bytes, $class, $crypto, $env, $error, $http, $is, $obj, $url, type $type } from '@clevercanyon/utilities';
-import { cfw, type $cfw } from '@clevercanyon/utilities.cfw';
+import { $app, $bytes, $class, $crypto, $env, $error, $http, $is, $url, type $type } from '@clevercanyon/utilities';
+import { $cfw, cfw } from '@clevercanyon/utilities.cfw';
 
 /**
  * Defines types.
  */
-export type ExecutionContext = Readonly<Parameters<$type.cfw.PagesFunction<$cfw.StdEnvironment>>[0]>;
-export type Environment = $cfw.StdEnvironment & ExecutionContext['env'];
+export type ExecutionContext = Readonly<Parameters<$type.cfw.PagesFunction<$type.$cfw.Environment>>[0]>;
+export type Environment = $type.$cfw.Environment & Readonly<ExecutionContext['env']>;
 
 export type Route = ((rcData: RequestContextData) => Promise<$type.cfw.Response>) & {
     config?: Required<$http.RouteConfig>;
@@ -20,7 +20,7 @@ export type InitialRequestContextData = Readonly<{
     ctx: ExecutionContext;
     route: Route;
 }>;
-export type RequestContextData = $cfw.StdRequestContextData &
+export type RequestContextData = $type.$cfw.RequestContextData &
     Readonly<{
         ctx: ExecutionContext;
         env: Environment;
@@ -58,12 +58,13 @@ const maybeInitializeGlobals = async (ircData: InitialRequestContextData): Promi
  *
  * @param   ircData Initial request context data.
  *
- * @returns         Response promise.
+ * @returns         Promise of a {@see $type.cfw.Response}.
  */
 export const handleFetchEvent = async (ircData: InitialRequestContextData): Promise<$type.cfw.Response> => {
     let { request } = ircData.ctx;
 
-    const { ctx, route } = ircData,
+    const { fetch, caches } = cfw,
+        { ctx, route } = ircData,
         { env } = ctx, // From context.
         subrequestCounter = { value: 0 };
 
@@ -89,13 +90,16 @@ export const handleFetchEvent = async (ircData: InitialRequestContextData): Prom
         const url = $url.parse(request.url) as $type.cfw.URL,
             originalURL = $url.parse(originalRequest.url) as $type.cfw.URL,
             consentLogger = baseConsentLogger.withContext({}, { request }),
-            rcData = $obj.freeze({
+            rcData = $cfw.rcDataPrepare({
                 ctx,
                 env,
 
                 url,
                 request,
                 route,
+
+                fetch,
+                caches,
 
                 auditLogger,
                 consentLogger,
@@ -170,7 +174,6 @@ const handleFetchCache = async (rcData: RequestContextData, route: Route): Promi
     }
     // Reads response for this request from HTTP cache.
 
-    rcData.subrequestCounter.value++;
     if ((cachedResponse = await caches.default.match(keyRequest, { ignoreMethod: true }))) {
         return $http.prepareCachedResponse(keyRequest, cachedResponse) as Promise<$type.cfw.Response>;
     }
@@ -194,7 +197,6 @@ const handleFetchCache = async (rcData: RequestContextData, route: Route): Promi
                 // Cloudflare will not actually cache if headers say not to; {@see https://o5p.me/gMv7W2}.
                 const responseForCache = (await $http.prepareResponseForCache(keyRequest, response)) as $type.cfw.Response;
                 await caches.default.put(keyRequest, responseForCache);
-                rcData.subrequestCounter.value++;
             })(),
         );
         response.headers.set('x-cache-status', 'miss'); // i.e., Cache miss.
