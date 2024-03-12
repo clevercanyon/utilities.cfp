@@ -143,8 +143,8 @@ export const handleFetchEvent = async (ircData: InitialRequestContextData): Prom
  * @returns        Response promise.
  */
 const handleFetchCache = async (rcData: RequestContextData, route: Route): Promise<$type.cfw.Response> => {
-    const { caches, Request } = cfw,
-        { ctx, url, request } = rcData;
+    const { Request } = cfw,
+        { ctx, url, request, caches } = rcData;
 
     // Populates cache key.
 
