@@ -4,7 +4,7 @@
 
 import '#@initialize.ts';
 
-import { $app, $bytes, $class, $crypto, $env, $error, $http, $is, $url, type $type } from '@clevercanyon/utilities';
+import { $class, $crypto, $env, $error, $http, $is, $url, type $type } from '@clevercanyon/utilities';
 import { $cfw, cfw } from '@clevercanyon/utilities.cfw';
 
 /**
@@ -13,9 +13,7 @@ import { $cfw, cfw } from '@clevercanyon/utilities.cfw';
 export type ExecutionContext = Readonly<Parameters<$type.cfw.PagesFunction<$type.$cfw.Environment>>[0]>;
 export type Environment = $type.$cfw.Environment & Readonly<ExecutionContext['env']>;
 
-export type Route = ((rcData: RequestContextData) => Promise<$type.cfw.Response>) & {
-    config?: Required<$http.RouteConfig>;
-};
+export type Route = $type.$cfw.Route<RequestContextData>;
 export type InitialRequestContextData = Readonly<{
     ctx: ExecutionContext;
     route: Route;
@@ -100,12 +98,11 @@ export const handleFetchEvent = async (ircData: InitialRequestContextData): Prom
 
                 fetch,
                 caches,
-
                 auditLogger,
                 consentLogger,
                 subrequestCounter,
             });
-        let response = handleFetchCache(rcData, route);
+        let response = $cfw.handleRouteCache(rcData, route);
 
         if (originalURL.searchParams.has('utx_audit_log')) {
             const token = originalURL.searchParams.get('utx_audit_log') || '',
@@ -129,77 +126,4 @@ export const handleFetchEvent = async (ircData: InitialRequestContextData): Prom
             body: message, // Safe message from whatever was thrown.
         }) as Promise<$type.cfw.Response>;
     }
-};
-
-// ---
-// Misc utilities.
-
-/**
- * Handles fetch caching.
- *
- * @param   rcData Request context data.
- * @param   route  Route handler.
- *
- * @returns        Response promise.
- */
-const handleFetchCache = async (rcData: RequestContextData, route: Route): Promise<$type.cfw.Response> => {
-    const { Request } = cfw,
-        { ctx, url, request, caches } = rcData;
-
-    // Populates cache key.
-
-    let key, cachedResponse; // Initialize.
-
-    const varyOn = new Set(route.config?.varyOn || []);
-    for (const v of varyOn) if (!request.headers.has(v)) varyOn.delete(v);
-
-    if ((!route.config || route.config.enableCORs) && request.headers.has('origin')) {
-        varyOn.add('origin'); // CORs requires us to vary on origin.
-    } else varyOn.delete('origin'); // Must not vary on origin.
-
-    key = 'v=' + (route.config?.cacheVersion || $app.buildTime().toStamp()).toString();
-    for (const v of varyOn) key += '&' + v + '=' + (request.headers.get(v) || '');
-
-    const keyURL = $url.removeCSOQueryVars(url); // e.g., `ut[mx]_`, `_ck`, etc.
-    keyURL.searchParams.set('_ck', key), keyURL.searchParams.sort(); // Optimizes cache.
-    const keyRequest = new Request(keyURL.toString(), request);
-
-    // Checks if request is cacheable.
-    if (
-        !['HEAD', 'GET'].includes(keyRequest.method) || //
-        !$http.requestHasCacheableMethod(keyRequest) ||
-        'none' === route.config?.cacheVersion // Explicitly uncacheable.
-    ) {
-        return route(rcData); // Not cacheable.
-    }
-    // Reads response for this request from HTTP cache.
-
-    if ((cachedResponse = await caches.default.match(keyRequest, { ignoreMethod: true }))) {
-        return $http.prepareCachedResponse(keyRequest, cachedResponse) as Promise<$type.cfw.Response>;
-    }
-    // Routes request and writes response to HTTP cache.
-
-    const response = await route(rcData); // Awaits response so we can cache.
-    if (
-        !response.webSocket &&
-        206 !== response.status &&
-        'GET' === keyRequest.method &&
-        //
-        '*' !== response.headers.get('vary') &&
-        !(response.headers.get('cdn-cache-control') || '')
-            .toLowerCase().split(/\s*,\s*/u).includes('no-store') &&
-        //
-        response.headers.has('content-length') && // Our own limit is 25 MiB max.
-        Number(response.headers.get('content-length')) <= $bytes.inMebibyte * 25 // prettier-ignore
-    ) {
-        ctx.waitUntil(
-            (async (/* Caching occurs in background via `waitUntil()`. */): Promise<void> => {
-                // Cloudflare will not actually cache if headers say not to; {@see https://o5p.me/gMv7W2}.
-                const responseForCache = (await $http.prepareResponseForCache(keyRequest, response)) as $type.cfw.Response;
-                await caches.default.put(keyRequest, responseForCache);
-            })(),
-        );
-        response.headers.set('x-cache-status', 'miss'); // i.e., Cache miss.
-    }
-    return response; // Potentially cached async via `waitUntil()`.
 };
