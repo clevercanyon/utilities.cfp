@@ -10,7 +10,7 @@ import { $cfw, cfw } from '@clevercanyon/utilities.cfw';
 /**
  * Defines types.
  */
-export type ExecutionContext = Readonly<Parameters<$type.cfw.PagesFunction<$type.$cfw.Environment>>[0]>;
+export type ExecutionContext = Readonly<Parameters<$type.cfw.PagesFunction<$type.$cfw.Environment>>[0] & { request: $type.cfw.Request }>;
 export type Environment = $type.$cfw.Environment & Readonly<ExecutionContext['env']>;
 
 export type Route = $type.$cfw.Route<RequestContextData>;
@@ -64,7 +64,7 @@ export const handleFetchEvent = async (ircData: InitialRequestContextData): Prom
     const { fetch, caches } = cfw,
         { ctx, route } = ircData,
         { env } = ctx, // From context.
-        subrequestCounter = { value: 0 };
+        subrequestCounter = request.c10n?.serviceBinding?.subrequestCounter || { value: 0 };
 
     await maybeInitializeGlobals(ircData); // Initializes worker globals.
 
