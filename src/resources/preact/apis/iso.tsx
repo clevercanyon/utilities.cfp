@@ -3,7 +3,7 @@
  */
 
 import { $cfp } from '#index.ts';
-import { $class, $env, $http, $mime, $preact, type $type } from '@clevercanyon/utilities';
+import { $class, $env, $http, $is, $mime, $preact, type $type } from '@clevercanyon/utilities';
 
 /**
  * Defines types.
@@ -61,8 +61,11 @@ export async function handleSPACatchAllRoute(rcData: $cfp.RequestContextData, ro
                 cfw: rcData,
             });
         config.status = httpState.status || 200;
-        config.headers = { 'content-type': $mime.contentType('.html') };
-        config.body = docType + html; // HTML markup; including doctype.
+        config.headers = $http.parseHeaders(httpState.headers || {});
+        config.body = Object.hasOwn(httpState, 'body') ? (httpState.body as $type.cfw.BodyInit) : docType + html;
+
+        if (!(config.headers as $type.cfw.Headers).has('content-type') && !$is.nul(config.body))
+            (config.headers as $type.cfw.Headers).set('content-type', $mime.contentType('.html'));
     }
     return $http.prepareResponse(request, config) as Promise<$type.cfw.Response>;
 }
