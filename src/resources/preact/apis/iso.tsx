@@ -9,7 +9,7 @@ import { $class, $env, $http, $is, $mime, $preact, type $type } from '@clevercan
  * Defines types.
  */
 export type HydrativelyRenderSPAOptions = $preact.iso.HydrativelyRenderSPAOptions;
-export type HandleSPACatchAllRouteOptions = Omit<$preact.iso.PrerenderSPAOptions, 'request' | 'cfw'>;
+export type HandleSPARouteOptions = Omit<$preact.iso.PrerenderSPAOptions, 'request' | 'cfw'>;
 
 /**
  * Defines logger class.
@@ -35,19 +35,19 @@ export async function hydrativelyRenderSPA(options: HydrativelyRenderSPAOptions)
 }
 
 /**
- * Handles an SPA's catch-all function route.
+ * Handles an SPA route on server-side.
  *
  * @param   rcData  Request context data.
  * @param   route   Underlying route; {@see $cfp.Route}.
- * @param   options Required; {@see HandleSPACatchAllRouteOptions}.
+ * @param   options Required; {@see HandleSPARouteOptions}.
  *
  * @returns         Promise of a {@see $type.cfw.Response}.
  *
  * @requiredEnv ssr -- This utility must only be used server-side.
  */
-export async function handleSPACatchAllRoute(rcData: $cfp.RequestContextData, route: $cfp.Route, options: HandleSPACatchAllRouteOptions): Promise<$type.cfw.Response> {
+export async function handleSPARoute(rcData: $cfp.RequestContextData, route: $cfp.Route, options: HandleSPARouteOptions): Promise<$type.cfw.Response> {
     const { request } = rcData, // Request extraction.
-        config = await $http.responseConfig({ ...handleSPACatchAllRoute.config, ...route.config });
+        config = await $http.responseConfig({ ...handleSPARoute.config, ...route.config });
 
     if (['HEAD', 'GET'].includes(request.method)) {
         const {
@@ -69,4 +69,4 @@ export async function handleSPACatchAllRoute(rcData: $cfp.RequestContextData, ro
     }
     return $http.prepareResponse(request, config) as Promise<$type.cfw.Response>;
 }
-handleSPACatchAllRoute.config = $http.routeConfig({ enableCORs: false, varyOn: [] });
+handleSPARoute.config = $http.routeConfig({ enableCORs: false, varyOn: [] });
