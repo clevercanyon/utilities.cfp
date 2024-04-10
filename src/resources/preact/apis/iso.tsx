@@ -8,8 +8,8 @@ import { $class, $env, $http, $is, $mime, $preact, type $type } from '@clevercan
 /**
  * Defines types.
  */
-export type HydrativelyRenderSPAOptions = $preact.iso.HydrativelyRenderSPAOptions;
-export type HandleSPARouteOptions = Omit<$preact.iso.PrerenderSPAOptions, 'request' | 'cfw'>;
+export type HydrateSPAOptions = $preact.iso.HydrateSPAOptions;
+export type HandleSPARouteOptions = Omit<$preact.iso.RenderSPAOptions, 'request' | 'cfw'>;
 
 /**
  * Defines logger class.
@@ -17,25 +17,25 @@ export type HandleSPARouteOptions = Omit<$preact.iso.PrerenderSPAOptions, 'reque
 const Logger = $class.getLogger();
 
 /**
- * Hydratively renders SPA component on client-side.
+ * Hydrates SPA client-side.
  *
- * @param options Required; {@see HydrativelyRenderSPAOptions}.
+ * @param options Required; {@see HydrateSPAOptions}.
  *
  * @requiredEnv web -- This utility must only be used client-side.
  *
  * @note An `auditLogger` is prepared before hydratively rendering,
  *       such that it’s capable of recording uncaught hydration errors.
  */
-export async function hydrativelyRenderSPA(options: HydrativelyRenderSPAOptions): Promise<void> {
+export async function hydrateSPA(options: HydrateSPAOptions): Promise<void> {
     const auditLogger = // Audit logger creation.
         options.props?.auditLogger || // Preserves existing, if passed in props.
         new Logger({ endpointToken: $env.get('APP_AUDIT_LOGGER_BEARER_TOKEN', { type: 'string', require: true }) });
 
-    void $preact.iso.hydrativelyRenderSPA({ ...options, props: { ...options.props, auditLogger } });
+    void $preact.iso.hydrateSPA({ ...options, props: { ...options.props, auditLogger } });
 }
 
 /**
- * Handles an SPA route on server-side.
+ * Handles an SPA route server-side.
  *
  * @param   rcData  Request context data.
  * @param   route   Underlying route; {@see $cfp.Route}.
@@ -54,8 +54,8 @@ export async function handleSPARoute(rcData: $cfp.RequestContextData, route: $cf
             httpState,
             docType,
             html,
-        } = // Prerenders single-page application.
-            await $preact.iso.prerenderSPA({
+        } = // Renders SPA.
+            await $preact.iso.renderSPA({
                 ...options,
                 request,
                 cfw: rcData,
@@ -69,4 +69,4 @@ export async function handleSPARoute(rcData: $cfp.RequestContextData, route: $cf
     }
     return $http.prepareResponse(request, config) as Promise<$type.cfw.Response>;
 }
-handleSPARoute.config = $http.routeConfig({ enableCORs: false, varyOn: [] });
+handleSPARoute.config = $http.routeConfig({ enableCORs: false, cacheUsers: true, varyOn: [] });
