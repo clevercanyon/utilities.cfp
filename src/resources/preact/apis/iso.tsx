@@ -69,4 +69,4 @@ export async function handleSPARoute(rcData: $cfp.RequestContextData, route: $cf
     }
     return $http.prepareResponse(request, config) as Promise<$type.cfw.Response>;
 }
-handleSPARoute.config = $http.routeConfig({ enableCORs: false, cacheUsers: true, varyOn: [] });
+handleSPARoute.config = $http.routeConfig({ enableCORs: false, varyOn: [] });
