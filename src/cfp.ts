@@ -10,7 +10,11 @@ import { $cfw, cfw } from '@clevercanyon/utilities.cfw';
 /**
  * Defines types.
  */
-export type ExecutionContext = Readonly<Parameters<$type.cfw.PagesFunction<$type.$cfw.Environment>>[0] & { request: $type.cfw.Request }>;
+export type ExecutionContext = Readonly<
+    Omit<Parameters<$type.cfw.PagesFunction<$type.$cfw.Environment>>[0], 'request'> & {
+        request: $type.cfw.Request<unknown, $type.cfw.IncomingRequestCfProperties>;
+    }
+>;
 export type Environment = $type.$cfw.Environment & Readonly<ExecutionContext['env']>;
 
 export type Route = $type.$cfw.Route<RequestContextData>;
@@ -80,7 +84,7 @@ export const handleFetchEvent = async (ircData: InitialRequestContextData): Prom
 
     try {
         let originalRequest = request; // Potentially rewritten.
-        request = (await $http.prepareRequest(request, {})) as $type.cfw.Request;
+        request = (await $http.prepareRequest(request, {})) as $type.cfw.Request<unknown, $type.cfw.IncomingRequestCfProperties>;
 
         if (request !== originalRequest /* Reinitializes audit logger. */) {
             auditLogger = baseAuditLogger.withContext({}, { request });

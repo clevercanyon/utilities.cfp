@@ -21,6 +21,7 @@ import importAliases from '../bin/includes/import-aliases.mjs';
 import u from '../bin/includes/utilities.mjs';
 import viteA16sDir from './includes/a16s/dir.mjs';
 import viteC10nBrandConfig from './includes/c10n/brand-config.mjs';
+import viteC10nCloudflareEmail from './includes/c10n/cloudflare-email.mjs';
 import viteC10nCloudflareSockets from './includes/c10n/cloudflare-sockets.mjs';
 import viteC10nHTMLTransformsConfig from './includes/c10n/html-transforms.mjs';
 import viteC10nNoModulePreloadConfig from './includes/c10n/no-module-preload.mjs';
@@ -211,6 +212,7 @@ export default async ({ mode, command, isSsrBuild: isSSRBuild }) => {
 
         await viteIconsConfig({}),
         await viteC10nBrandConfig({ mode, appBaseURL }),
+        await viteC10nCloudflareEmail({ mode, command }),
         await viteC10nCloudflareSockets({ mode, command }),
         //
         await viteMDXConfig({ projDir }),
@@ -321,7 +323,7 @@ export default async ({ mode, command, isSsrBuild: isSSRBuild }) => {
         optimizeDeps: {
             force: true, // Don’t use cache for optimized deps; recreate.
             esbuildOptions: {
-                external: ['cloudflare:sockets'],
+                external: ['cloudflare:email', 'cloudflare:sockets'],
                 plugins: [await viteMDXESBuildConfig({ projDir })],
             },
             // Preact is required by prefresh plugin; {@see https://o5p.me/WmuefH}.
