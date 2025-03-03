@@ -17,7 +17,7 @@
 # Generated data.
 # <generated:start>
 
-# Last generated Feb 25, 2025 6:26 PM UTC.
+# Last generated Mar 3, 2025 1:37 PM UTC.
 
 # Locals
 
@@ -260,6 +260,8 @@ test
 tests
 *.test.*
 *.tests.*
+test-d
+tests-d
 *.test-d.*
 *.tests-d.*
 
@@ -269,6 +271,8 @@ spec
 specs
 *.spec.*
 *.specs.*
+spec-d
+specs-d
 *.spec-d.*
 *.specs-d.*
 
