@@ -3,7 +3,7 @@
     "publishConfig": {
         "access": "public"
     },
-    "version": "1.0.264",
+    "version": "1.0.265",
     "license": "GPL-3.0-or-later",
     "name": "@clevercanyon/utilities.cfp",
     "description": "Utilities for JavaScript apps running in a Cloudflare Pages environment.",
@@ -44,6 +44,11 @@
             "types": "./dist/types/preact.d.ts",
             "import": "./dist/preact.js",
             "default": "./dist/preact.js"
+        },
+        "./test": {
+            "types": "./dist/types/test.d.ts",
+            "import": "./dist/test.js",
+            "default": "./dist/test.js"
         }
     },
     "sideEffects": ["**/*.{css,scss,less}", "./src/resources/initialize.ts"],
@@ -59,9 +64,9 @@
     },
     "dependencies": {},
     "peerDependencies": {
-        "@clevercanyon/utilities": "^1.0.1010",
-        "@clevercanyon/utilities.cfw": "^1.0.348",
-        "@clevercanyon/utilities.web": "^1.0.165"
+        "@clevercanyon/utilities": "^1.0.1012",
+        "@clevercanyon/utilities.cfw": "^1.0.351",
+        "@clevercanyon/utilities.web": "^1.0.166"
     },
     "peerDependenciesMeta": {},
     "optionalDependencies": {},

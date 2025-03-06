@@ -268,6 +268,7 @@ export const prepareDefaultRoutesJSON = (options: PrepareDefaultRoutesJSONOption
                 '/.well-known/*',
                 '/assets/*',
                 '/sitemaps/*',
+                '/vite/*',
                 '/sitemap.xml',
                 '/manifest.json',
                 '/ads.txt',
