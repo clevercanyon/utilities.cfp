@@ -32,7 +32,7 @@ export default async ({ projDir, pkg, wranglerSettings, prefreshEnable }) => ({
                   '@preact/signals',
               ]
             : []),
-    ].filter((name) => name !== pkg.name),
+    ].filter((name) => name !== pkg.name && !name.startsWith(pkg.name + '/')),
 
     exclude: [
         ...wranglerSettings.runtimeModules, //
