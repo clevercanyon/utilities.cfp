@@ -103,15 +103,15 @@ subject_alt_names=$(
 )
 # Start clean each time.
 
-rm -f ./openssl/store/certs/*
-rm -f ./openssl/store/certs-db
-rm -f ./openssl/store/certs-db.*
-rm -f ./openssl/store/serial-db
-rm -f ./openssl/store/serial-db.*
+rm -f ./resources/openssl/store/certs/*
+rm -f ./resources/openssl/store/certs-db
+rm -f ./resources/openssl/store/certs-db.*
+rm -f ./resources/openssl/store/serial-db
+rm -f ./resources/openssl/store/serial-db.*
 
 if [[ ! -d "${output_dir}" ]]; then mkdir -p "${output_dir}"; fi
-if [[ ! -d ./openssl/store/certs ]]; then mkdir -p ./openssl/store/certs; fi
-touch ./openssl/store/certs-db
+if [[ ! -d ./resources/openssl/store/certs ]]; then mkdir -p ./resources/openssl/store/certs; fi
+touch ./resources/openssl/store/certs-db
 
 # Root self-signed & intermediate CA keys.
 
@@ -120,7 +120,7 @@ openssl genrsa -out "${output_dir}"/i10e-ca-key.pem 4096
 
 # Root self-signed CA certificate.
 
-openssl req -config ./openssl/config.ini \
+openssl req -config ./resources/openssl/config.ini \
     -new \
     -nodes \
     -sha512 \
@@ -129,7 +129,7 @@ openssl req -config ./openssl/config.ini \
     -subj "${root_subject}" -addext 'subjectAltName = '"${subject_alt_names}" \
     -addext 'keyUsage = '"${key_usages}" -addext 'extendedKeyUsage = '"${extended_key_usages}"
 
-openssl ca -config ./openssl/config.ini -extensions v3_root_ca \
+openssl ca -config ./resources/openssl/config.ini -extensions v3_root_ca \
     -selfsign \
     -notext \
     -batch \
@@ -142,7 +142,7 @@ openssl ca -config ./openssl/config.ini -extensions v3_root_ca \
 
 # Intermediate CSR & CA certificate.
 
-openssl req -config ./openssl/config.ini \
+openssl req -config ./resources/openssl/config.ini \
     -new \
     -nodes \
     -sha512 \
@@ -151,7 +151,7 @@ openssl req -config ./openssl/config.ini \
     -subj "${i10e_subject}" -addext 'subjectAltName = '"${subject_alt_names}" \
     -addext 'keyUsage = '"${key_usages}" -addext 'extendedKeyUsage = '"${extended_key_usages}"
 
-openssl ca -config ./openssl/config.ini -extensions v3_i10e_ca \
+openssl ca -config ./resources/openssl/config.ini -extensions v3_i10e_ca \
     -notext \
     -batch \
     -md sha512 \

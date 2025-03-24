@@ -40,13 +40,19 @@ export default async ({ isSSRBuild, a16sDir, appType, targetEnvIsServer, appEntr
             terserOptions: terserConfig, // Terser config options.
             minify: minifyEnable ? 'terser' : false, // {@see https://o5p.me/pkJ5Xz}.
             cssMinify: minifyEnable ? 'lightningcss' : false, // {@see https://o5p.me/h0Hgj3}.
-            // We ran several tests between `esbuild`, `cssnano`, and `lightningcss` wins.
+            modulePreload: { polyfill: false }, // The browsers we target don't need a polyfill.
 
-            modulePreload: false, // Disable. DOM injections conflict with our SPAs.
-            // This option is sort-of respected, but not fully; {@see https://github.com/vitejs/vite/issues/13952}.
-            // For now, we have a custom plugin, configured above, which effectively disables all preloading.
+            ...(['cma', 'lib'].includes(appType)
+                ? {
+                      lib: {
+                          formats: ['es'],
+                          entry: appEntries,
 
-            ...(['cma', 'lib'].includes(appType) ? { lib: { entry: appEntries, formats: ['es'] } } : {}),
+                          fileName: 'index', // N/A, overridden by `entryFileNames()` in `../rollup/config.mjs`.
+                          cssFileName: 'index', // This one is still relevant because CSS is not handled by rollup.
+                      },
+                  }
+                : {}),
             rollupOptions: rollupConfig, // See: <https://o5p.me/5Vupql>.
         },
     };

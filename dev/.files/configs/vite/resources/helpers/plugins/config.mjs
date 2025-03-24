@@ -16,7 +16,7 @@ import c10nCloudflareSocketsPluginConfig from '../../plugins/c10n/cloudflare-soc
 import c10nCloudflareWorkersPluginConfig from '../../plugins/c10n/cloudflare-workers/config.mjs';
 import c10nCloudflareWorkflowsPluginConfig from '../../plugins/c10n/cloudflare-workflows/config.mjs';
 import c10nHTMLTransformsPluginConfig from '../../plugins/c10n/html-transforms/config.mjs';
-import c10nNoModulePreloadPluginConfig from '../../plugins/c10n/no-module-preload/config.mjs';
+import c10nModulePreloadPluginConfig from '../../plugins/c10n/module-preload/config.mjs';
 import c10nPostProcessingPluginConfig from '../../plugins/c10n/post-processing/config.mjs';
 import c10nPreProcessingPluginConfig from '../../plugins/c10n/pre-processing/config.mjs';
 import c10nSideEffectsPluginConfig from '../../plugins/c10n/side-effects/config.mjs';
@@ -38,7 +38,7 @@ export default async ({ mode, command, isSSRBuild, wranglerMode, env, staticDefs
     return {
         pluginsConfig: [
             await c10nSideEffectsPluginConfig({}),
-            await c10nNoModulePreloadPluginConfig({}),
+            await c10nModulePreloadPluginConfig({ appType, isSSRBuild }),
 
             await unpluginIconsPluginConfig({}),
             await c10nBrandConfigPluginConfig({ mode, appBaseURL }),

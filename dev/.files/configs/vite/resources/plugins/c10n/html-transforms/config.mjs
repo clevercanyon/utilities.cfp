@@ -22,7 +22,7 @@ export default async ({ staticDefs }) => {
         name: 'vite-plugin-c10n-html-transforms',
 
         transformIndexHtml(html) {
-            for (const key of Object.keys(staticDefs) /* Replaces all static definition tokens. */) {
+            for (const key of Object.keys(staticDefs)) {
                 html = html.replace(new RegExp($str.escRegExp(key), 'gu'), staticDefs[key]);
             }
             return html;

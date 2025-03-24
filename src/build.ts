@@ -68,6 +68,7 @@ export const prepareDefaultWellKnownGPGTxt = (options: PrepareDefaultWellKnownGP
     }
     return $str.dedent(`
         -----BEGIN PGP PUBLIC KEY BLOCK-----
+        Comment: Clever Canyon’s Public OpenPGP/GPG Key (RSA 4096-Bit)
 
         mQINBGWFAj4BEADONu8MsVl9kqa+Sg3NOApSQgSIubYv8UdUqkdRGBwM8etHGyup
         Mau1f0+jOvkZGdMONcagj96r2d5bXSBN4mOwqxL7CvBdQ4yYkGyrGAXHKH3jbWTM
@@ -145,7 +146,7 @@ export const prepareDefaultWellKnownSecurityTxt = (options: PrepareDefaultWellKn
         Contact: ${brandContacts.security.url}
         Policy: ${brandPolicies.security}
         Encryption: ${new URL('./.well-known/gpg.txt', opts.baseURL).toString()}
-        Expires: ${$time.now().add(2, 'y').toYMD()}
+        Expires: ${$time.now().add(50, 'y').toYMD()}
         Preferred-Languages: en
     `);
 };
@@ -499,10 +500,10 @@ export const prepareDefaultHumansTxt = (options: PrepareDefaultHumansTxtOptions)
         Headline: ${jaswrks.headline}
         Location: ${jaswrks.location}
 
+        X: ${jaswrks.socialProfiles.x}
         NPM: ${jaswrks.socialProfiles.npm}
         GitHub: ${jaswrks.socialProfiles.github}
         Keybase: ${jaswrks.socialProfiles.keybase}
-        Twitter: ${jaswrks.socialProfiles.twitter}
         LinkedIn: ${jaswrks.socialProfiles.linkedin}
 
         Technologies: ES2022, HTML5, CSS4
@@ -514,10 +515,10 @@ export const prepareDefaultHumansTxt = (options: PrepareDefaultHumansTxtOptions)
         Headline: ${brucewrks.headline}
         Location: ${brucewrks.location}
 
+        X: ${brucewrks.socialProfiles.x}
         NPM: ${brucewrks.socialProfiles.npm}
         GitHub: ${brucewrks.socialProfiles.github}
         Keybase: ${brucewrks.socialProfiles.keybase}
-        Twitter: ${brucewrks.socialProfiles.twitter}
         LinkedIn: ${brucewrks.socialProfiles.linkedin}
 
         Technologies: ES2022, HTML5, CSS4

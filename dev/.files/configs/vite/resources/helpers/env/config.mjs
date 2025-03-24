@@ -29,7 +29,7 @@ import u from '../../../../../resources/utilities.mjs';
 export default async ({ mode, command, isSSRBuild }) => {
     // Must set these before running `loadEnv()`.
 
-    $env.set('@global', 'APP_IS_VITE', command + '=' + mode);
+    $env.set('@global', '_APP_IS_VITE', command + '=' + mode);
     $env.set('@global', 'NODE_ENV', 'dev' === mode ? 'development' : 'production');
 
     // Configures app environment prefixes.
@@ -37,8 +37,7 @@ export default async ({ mode, command, isSSRBuild }) => {
     const appEnvPrefixes = ['APP_'];
     if (isSSRBuild) appEnvPrefixes.push('SSR_APP_');
 
-    // `loadEnv()` includes `process.env.[appEnvPrefixes]*`.
-    // In other words, `APP_IS_VITE` will be in our resulting `env`.
+    // `loadEnv()` (includes `process.env.[appEnvPrefixes]*`).
 
     const env = loadEnv(mode, u.envsDir, appEnvPrefixes);
 

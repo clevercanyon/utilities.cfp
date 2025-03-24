@@ -81,6 +81,9 @@ export default async () => {
 
             // Disable this rule, as GFM explicitly allows this.
             ['remark-lint-no-literal-urls', false],
+
+            // We allow unused definitions to serve as markdown comments.
+            ['remark-lint-no-unused-definitions', false],
         ],
     };
 };

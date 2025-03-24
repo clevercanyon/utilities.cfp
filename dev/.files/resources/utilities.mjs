@@ -70,6 +70,7 @@ export default class u {
     static __devDir;
     static __envsDir;
     static __logsDir;
+    static __tmpDir;
 
     static __dfDir;
     static __dfBinDir;
@@ -109,6 +110,7 @@ export default class u {
     static devDir;
     static envsDir;
     static logsDir;
+    static tmpDir;
 
     static dfDir;
     static dfBinDir;
@@ -242,6 +244,7 @@ export default class u {
         u[__ + 'devDir'] = path.resolve(u[__ + 'projDir'], './dev');
         u[__ + 'envsDir'] = path.resolve(u[__ + 'devDir'], './.envs');
         u[__ + 'logsDir'] = path.resolve(u[__ + 'devDir'], './.logs');
+        u[__ + 'tmpDir'] = path.resolve(u[__ + 'devDir'], './.~tmp');
 
         u[__ + 'dfDir'] = path.resolve(u[__ + 'devDir'], './.files');
         u[__ + 'dfBinDir'] = path.resolve(u[__ + 'dfDir'], './bin');
@@ -257,6 +260,8 @@ export default class u {
 
         u[__ + 'readmeFile'] = path.resolve(u[__ + 'projDir'], './README.md');
         u[__ + 'licenseFile'] = path.resolve(u[__ + 'projDir'], './LICENSE.txt');
+
+        fs.mkdirSync(u[__ + 'tmpDir'], { recursive: true, mode: 0o777 });
     }
 
     /*

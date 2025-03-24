@@ -9,7 +9,6 @@
  */
 
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { $chalk } from '../../../../../../../../node_modules/@clevercanyon/utilities.node/dist/index.js';
 import u from '../../../../../../resources/utilities.mjs';
@@ -23,49 +22,60 @@ import getWranglerSettings from '../../../../../wrangler/resources/settings.mjs'
  * @returns       Pre-processing plugin.
  */
 export default async ({ command, isSSRBuild, appType }) => {
+    let preProcessed = false; // Initialize.
     const wranglerSettings = await getWranglerSettings();
+
     return {
         name: 'vite-plugin-c10n-pre-processing',
         enforce: 'pre', // Before others on this hook.
-
-        // By 'pre', we mean before writing bundle to disk.
         // i.e., The `buildEnd` hook fires before writing to disk.
-        buildEnd(error) {
-            if (error) return; // Not applicable.
+        // {@see https://vite.dev/guide/using-plugins.html#enforcing-plugin-ordering}.
+        // {@see https://vite.dev/guide/api-plugin.html#plugin-ordering}.
 
-            const maybeEmptyDistDir = () => {
-                    if ('build' !== command || isSSRBuild) return;
-                    if (!fs.existsSync(u.distDir)) return;
+        buildEnd: {
+            order: 'pre',
+            sequential: true,
+            handler: async (error) => {
+                if (preProcessed || error) return;
+                preProcessed = true; // Processing now.
 
-                    if (['spa', 'mpa'].includes(appType)) {
-                        // Preserving important-ish things in `wranglerSettings.distNmCacheDir`.
-                        // e.g., `./dist/node_modules/.cache/wrangler/wrangler-account.json`.
+                const maybeEmptyDistDir = () => {
+                        if ('build' !== command || isSSRBuild) return;
+                        if (!fs.existsSync(u.distDir)) return;
 
-                        if (fs.existsSync(wranglerSettings.distNmCacheDir)) {
-                            const tmpDir = fs.mkdtempSync(path.resolve(os.tmpdir(), './wrangler-')),
-                                tmpDistNmCacheDir = path.resolve(tmpDir, './distNmCacheDir');
+                        if (['spa', 'mpa'].includes(appType)) {
+                            // Preserving important-ish things in `wranglerSettings.distNmCacheDir`.
+                            // e.g., `./dist/node_modules/.cache/wrangler/wrangler-account.json`.
+                            // e.g., `./dist/node_modules/.cache/wrangler/pages.json`.
 
-                            u.log($chalk.gray('Preserving `./' + path.relative(u.projDir, wranglerSettings.distNmCacheDir) + '`.'));
-                            fs.renameSync(wranglerSettings.distNmCacheDir, tmpDistNmCacheDir);
+                            if (fs.existsSync(wranglerSettings.distNmCacheDir)) {
+                                // We must use a local tmp directory within this project (not `os.tmpdir()`), because we are doing a rename,
+                                // which may not work across drives or across devices; e.g., if this project is within an external disk.
 
-                            resetDistDir(); // Resets `./dist` directory.
+                                const tmpDir = fs.mkdtempSync(path.resolve(u.tmpDir, './wrangler-')),
+                                    tmpDistNmCacheDir = path.resolve(tmpDir, './distNmCacheDir');
 
-                            u.log($chalk.gray('Restoring `./' + path.relative(u.projDir, wranglerSettings.distNmCacheDir) + '`.'));
-                            fs.mkdirSync(path.dirname(wranglerSettings.distNmCacheDir), { recursive: true });
-                            fs.renameSync(tmpDistNmCacheDir, wranglerSettings.distNmCacheDir);
-                            fs.rmSync(tmpDir, { force: true, recursive: true });
+                                u.log($chalk.gray('Preserving `./' + path.relative(u.projDir, wranglerSettings.distNmCacheDir) + '`.'));
+                                fs.renameSync(wranglerSettings.distNmCacheDir, tmpDistNmCacheDir);
 
-                            return; // Done; stop here.
+                                resetDistDir(); // Resets `./dist` directory.
+
+                                u.log($chalk.gray('Restoring `./' + path.relative(u.projDir, wranglerSettings.distNmCacheDir) + '`.'));
+                                fs.mkdirSync(path.dirname(wranglerSettings.distNmCacheDir), { recursive: true });
+                                fs.renameSync(tmpDistNmCacheDir, wranglerSettings.distNmCacheDir);
+                                fs.rmSync(tmpDir, { force: true, recursive: true });
+
+                                return; // Done; stop here.
+                            }
                         }
-                    }
-                    resetDistDir(); // Resets `./dist` directory.
-                },
-                resetDistDir = () => {
-                    u.log($chalk.gray('Resetting `./' + path.relative(u.projDir, u.distDir) + '` directory.'));
-                    fs.rmSync(u.distDir, { force: true, recursive: true });
-                };
-
-            maybeEmptyDistDir(); // Empties `./dist` directory prior to a new bundle being written to disk.
+                        resetDistDir(); // Resets `./dist` directory.
+                    },
+                    resetDistDir = () => {
+                        u.log($chalk.gray('Resetting `./' + path.relative(u.projDir, u.distDir) + '` directory.'));
+                        fs.rmSync(u.distDir, { force: true, recursive: true });
+                    };
+                maybeEmptyDistDir(); // Empties `./dist` directory prior to a new bundle being written to disk.
+            },
         },
     };
 };

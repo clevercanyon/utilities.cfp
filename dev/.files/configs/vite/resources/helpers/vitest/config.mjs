@@ -214,7 +214,7 @@ export default async ({ mode, appType, targetEnv, vitestSandboxEnable, vitestExa
             // Vars with app-environment prefixes are already included by default.
             // This is mainly for worker tests, because `process.env` is available otherwise;
             // whereas with worker tests, the pool of workers does not inherit `process.env`.
-            env: $obj.pick(process.env, ['CI', 'TEST', 'VITEST']),
+            env: $obj.pick(process.env, ['CI', 'TEST', 'VITEST', '_APP_IS_VITE']),
 
             outputFile: {
                 json: path.resolve(u.logsDir, './tests/vitest.json'),

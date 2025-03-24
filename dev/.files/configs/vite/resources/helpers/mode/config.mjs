@@ -22,8 +22,8 @@ import { $env } from '../../../../../../../node_modules/@clevercanyon/utilities/
 export default async ({ viteMode, viteCommand, viteIsSsrBuild }) => {
     let mode = viteMode; // Initialize.
 
-    if ($env.test('APP_IS_VITE') /* Child process of Vite? */) {
-        mode = $env.get('APP_IS_VITE', { type: 'string' }).split('=')[1] || mode;
+    if ($env.test('_APP_IS_VITE') /* Child process of Vite? */) {
+        mode = $env.get('_APP_IS_VITE', { type: 'string' }).split('=')[1] || mode;
     }
     return {
         mode,
